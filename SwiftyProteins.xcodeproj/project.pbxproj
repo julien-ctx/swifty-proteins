@@ -7,8 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6FEE429C2BFC10C700D974B8 /* ligand.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6FEE429B2BFC10C600D974B8 /* ligand.txt */; };
+		6FEE42A02BFC157200D974B8 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE429F2BFC157200D974B8 /* LoginView.swift */; };
+		6FEE42A22BFC157E00D974B8 /* ProteinListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE42A12BFC157E00D974B8 /* ProteinListView.swift */; };
+		6FEE42A42BFC158700D974B8 /* ProteinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE42A32BFC158700D974B8 /* ProteinView.swift */; };
+		6FEE42AC2BFCE9D000D974B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6FEE42AB2BFCE9D000D974B8 /* LaunchScreen.storyboard */; };
+		6FEE42B12BFE3FD800D974B8 /* ProteinListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE42B02BFE3FD800D974B8 /* ProteinListViewModel.swift */; };
 		B7BAA5472BF88B730046F051 /* SwiftyProteinsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7BAA5462BF88B730046F051 /* SwiftyProteinsApp.swift */; };
-		B7BAA5492BF88B730046F051 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7BAA5482BF88B730046F051 /* ContentView.swift */; };
 		B7BAA54B2BF88B740046F051 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B7BAA54A2BF88B740046F051 /* Assets.xcassets */; };
 		B7BAA54E2BF88B740046F051 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B7BAA54D2BF88B740046F051 /* Preview Assets.xcassets */; };
 		B7BAA5582BF88B740046F051 /* SwiftyProteinsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7BAA5572BF88B740046F051 /* SwiftyProteinsTests.swift */; };
@@ -34,9 +39,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6FEE429B2BFC10C600D974B8 /* ligand.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ligand.txt; sourceTree = "<group>"; };
+		6FEE429F2BFC157200D974B8 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		6FEE42A12BFC157E00D974B8 /* ProteinListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinListView.swift; sourceTree = "<group>"; };
+		6FEE42A32BFC158700D974B8 /* ProteinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinView.swift; sourceTree = "<group>"; };
+		6FEE42AB2BFCE9D000D974B8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		6FEE42B02BFE3FD800D974B8 /* ProteinListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinListViewModel.swift; sourceTree = "<group>"; };
 		B7BAA5432BF88B730046F051 /* SwiftyProteins.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftyProteins.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7BAA5462BF88B730046F051 /* SwiftyProteinsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyProteinsApp.swift; sourceTree = "<group>"; };
-		B7BAA5482BF88B730046F051 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B7BAA54A2BF88B740046F051 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B7BAA54D2BF88B740046F051 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B7BAA5532BF88B740046F051 /* SwiftyProteinsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftyProteinsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -71,6 +81,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6FEE429D2BFC113200D974B8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6FEE429B2BFC10C600D974B8 /* ligand.txt */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		6FEE429E2BFC155400D974B8 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6FEE429F2BFC157200D974B8 /* LoginView.swift */,
+				6FEE42A12BFC157E00D974B8 /* ProteinListView.swift */,
+				6FEE42A32BFC158700D974B8 /* ProteinView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		6FEE42AF2BFE3FBD00D974B8 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				6FEE42B02BFE3FD800D974B8 /* ProteinListViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		B7BAA53A2BF88B730046F051 = {
 			isa = PBXGroup;
 			children = (
@@ -94,10 +130,13 @@
 		B7BAA5452BF88B730046F051 /* SwiftyProteins */ = {
 			isa = PBXGroup;
 			children = (
+				6FEE42AF2BFE3FBD00D974B8 /* ViewModels */,
+				6FEE429E2BFC155400D974B8 /* Views */,
+				6FEE429D2BFC113200D974B8 /* Resources */,
 				B7BAA5462BF88B730046F051 /* SwiftyProteinsApp.swift */,
-				B7BAA5482BF88B730046F051 /* ContentView.swift */,
 				B7BAA54A2BF88B740046F051 /* Assets.xcassets */,
 				B7BAA54C2BF88B740046F051 /* Preview Content */,
+				6FEE42AB2BFCE9D000D974B8 /* LaunchScreen.storyboard */,
 			);
 			path = SwiftyProteins;
 			sourceTree = "<group>";
@@ -232,7 +271,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7BAA54E2BF88B740046F051 /* Preview Assets.xcassets in Resources */,
+				6FEE429C2BFC10C700D974B8 /* ligand.txt in Resources */,
 				B7BAA54B2BF88B740046F051 /* Assets.xcassets in Resources */,
+				6FEE42AC2BFCE9D000D974B8 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,7 +298,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B7BAA5492BF88B730046F051 /* ContentView.swift in Sources */,
+				6FEE42B12BFE3FD800D974B8 /* ProteinListViewModel.swift in Sources */,
+				6FEE42A02BFC157200D974B8 /* LoginView.swift in Sources */,
+				6FEE42A42BFC158700D974B8 /* ProteinView.swift in Sources */,
+				6FEE42A22BFC157E00D974B8 /* ProteinListView.swift in Sources */,
 				B7BAA5472BF88B730046F051 /* SwiftyProteinsApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

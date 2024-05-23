@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct SwiftyProteinsApp: App {
+    @State private var isAuthenticated: Bool = false
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if isAuthenticated {
+                ProteinListView()
+            } else {
+                LoginView(isAuthenticated: $isAuthenticated)
+            }
         }
     }
 }
