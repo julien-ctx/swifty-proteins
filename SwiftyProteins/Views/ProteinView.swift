@@ -10,15 +10,35 @@ import SwiftUI
 
 struct ProteinView: View {
     var proteinType: String
+    
+    @StateObject private var viewModel = ProteinViewModel()
 
     var body: some View {
         VStack {
-            Text("3D Rendering for Protein: \(proteinType)")
-                .padding()
-            // Add 3D rendering code here
+                if viewModel.isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle()).scaleEffect(3)
+                } else if let error = viewModel.error {
+                    Text(error)
+                        .foregroundColor(.red)
+                        .padding()
+                } else if let pdbContent = viewModel.pdbContent {
+                    Text("3D Rendering for Protein: \(proteinType)")
+                        .padding()
+                    ScrollView {
+                        Text(pdbContent)
+                            .padding()
+                    }
+                } else {
+                    Text("No data to display")
+                        .padding()
+                }
+            }
+            .navigationTitle(proteinType)
+            .onAppear {
+                viewModel.getProteinData(for: proteinType)
+            }
         }
-        .navigationTitle(proteinType)
-    }
 }
 
 struct ProteinView_Previews: PreviewProvider {

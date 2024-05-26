@@ -13,6 +13,7 @@
 		6FEE42A42BFC158700D974B8 /* ProteinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE42A32BFC158700D974B8 /* ProteinView.swift */; };
 		6FEE42AC2BFCE9D000D974B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6FEE42AB2BFCE9D000D974B8 /* LaunchScreen.storyboard */; };
 		6FEE42B12BFE3FD800D974B8 /* ProteinListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE42B02BFE3FD800D974B8 /* ProteinListViewModel.swift */; };
+		B762F4942C039A5B00D6CCB0 /* ProteinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B762F4932C039A5B00D6CCB0 /* ProteinViewModel.swift */; };
 		B7BAA5472BF88B730046F051 /* SwiftyProteinsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7BAA5462BF88B730046F051 /* SwiftyProteinsApp.swift */; };
 		B7BAA54B2BF88B740046F051 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B7BAA54A2BF88B740046F051 /* Assets.xcassets */; };
 		B7BAA54E2BF88B740046F051 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B7BAA54D2BF88B740046F051 /* Preview Assets.xcassets */; };
@@ -45,6 +46,7 @@
 		6FEE42A32BFC158700D974B8 /* ProteinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinView.swift; sourceTree = "<group>"; };
 		6FEE42AB2BFCE9D000D974B8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6FEE42B02BFE3FD800D974B8 /* ProteinListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinListViewModel.swift; sourceTree = "<group>"; };
+		B762F4932C039A5B00D6CCB0 /* ProteinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinViewModel.swift; sourceTree = "<group>"; };
 		B7BAA5432BF88B730046F051 /* SwiftyProteins.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftyProteins.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7BAA5462BF88B730046F051 /* SwiftyProteinsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyProteinsApp.swift; sourceTree = "<group>"; };
 		B7BAA54A2BF88B740046F051 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				6FEE42B02BFE3FD800D974B8 /* ProteinListViewModel.swift */,
+				B762F4932C039A5B00D6CCB0 /* ProteinViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -298,6 +301,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B762F4942C039A5B00D6CCB0 /* ProteinViewModel.swift in Sources */,
 				6FEE42B12BFE3FD800D974B8 /* ProteinListViewModel.swift in Sources */,
 				6FEE42A02BFC157200D974B8 /* LoginView.swift in Sources */,
 				6FEE42A42BFC158700D974B8 /* ProteinView.swift in Sources */,
