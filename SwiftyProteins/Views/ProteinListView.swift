@@ -13,12 +13,21 @@ struct ProteinListView: View {
     
     var body: some View {
         NavigationView {
-            List(viewModel.proteinTypes, id: \.self) { protein in
-                NavigationLink(destination: ProteinView(proteinType: protein)) {
-                    Text(protein)
+            VStack {
+                TextField("Search Proteins", text: $viewModel.searchQuery)
+                    .padding()
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding([.leading, .trailing])
+                    .onChange(of: viewModel.searchQuery) { newValue in
+                        viewModel.filterProteins()
+                    }
+
+                List(viewModel.filteredProteinTypes, id: \.self) { protein in
+                    NavigationLink(destination: ProteinView(proteinType: protein)) {
+                        Text(protein)
+                    }
                 }
-            }
-            .navigationTitle("Proteins")
+            }.navigationTitle("Proteins")
         }
     }
 }
