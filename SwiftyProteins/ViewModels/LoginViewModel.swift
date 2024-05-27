@@ -13,6 +13,7 @@ class LoginViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var isAuthenticated: Bool = false
     @Published var showError: Bool = false
+    @Published var useBiometrics: Bool = false
 
     func authenticateUser() {
         if SQLiteManager.shared.verifyUser(username: username, password: password) {

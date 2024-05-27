@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct SwiftyProteinsApp: App {
     @State private var isAuthenticated: Bool = false
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
@@ -17,6 +18,11 @@ struct SwiftyProteinsApp: App {
                 ProteinListView()
             } else {
                 LoginView(viewModel: LoginViewModel(), isAuthenticated: $isAuthenticated)
+            }
+        }
+        .onChange(of: scenePhase) { newPhase, _ in
+            if newPhase == .active {
+                isAuthenticated = false
             }
         }
     }

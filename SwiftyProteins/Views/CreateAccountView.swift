@@ -22,11 +22,13 @@ struct CreateAccountView: View {
                 .padding()
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
+            Toggle(isOn: $viewModel.useBiometrics) {
+                Text("Use Touch ID / Face ID")
+            }
+            .padding()
+            
             Button(action: {
                 viewModel.createUser()
-                if !viewModel.showError {
-                    presentationMode.wrappedValue.dismiss()
-                }
             }) {
                 Text("Create Account")
                     .padding()
@@ -34,14 +36,24 @@ struct CreateAccountView: View {
                     .foregroundColor(.white)
                     .cornerRadius(8)
             }
-            
-            if viewModel.showError {
-                Text(viewModel.errorMessage)
-                    .foregroundColor(.red)
-                    .padding()
-            }
+
         }
         .padding()
+        .navigationBarTitle("Create Account", displayMode: .inline)
+        .navigationBarItems(leading: Button(action: {
+            presentationMode.wrappedValue.dismiss()
+        }) {
+            Image(systemName: "arrow.left")
+                .foregroundColor(.blue)
+                .padding()
+        })
+        .alert(isPresented: $viewModel.showAlert) {
+            Alert(
+                title: Text(viewModel.alertTitle),
+                message: Text(viewModel.alertMessage),
+                dismissButton: .default(Text("OK"))
+            )
+        }
     }
 }
 

@@ -26,12 +26,18 @@ struct LoginView: View {
                     .cornerRadius(8)
             }
             
-            if viewModel.showError {
-                Text("Authentication Failed")
-                    .foregroundColor(.red)
-                    .padding()
+            if viewModel.useBiometrics {
+                Button(action: {
+                    viewModel.authenticateWithBiometrics()
+                }) {
+                    Text("Use Touch ID / Face ID")
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
             }
-
+           
             Button(action: {
                 showCreateAccount.toggle()
             }) {
@@ -43,6 +49,9 @@ struct LoginView: View {
         .padding()
         .sheet(isPresented: $showCreateAccount) {
             CreateAccountView()
+        }
+        .alert(isPresented: $viewModel.showError) {
+            Alert(title: Text("Authentication Failed"), message: Text("The username or password you entered is incorrect."), dismissButton: .default(Text("OK")))
         }
         .onAppear {
             viewModel.authenticateWithBiometrics()
