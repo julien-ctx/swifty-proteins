@@ -22,6 +22,13 @@ struct Molecule {
 }
 
 class PDBParser {
+    enum PDBParserError: Error {
+        case InvalidRecordName
+        case InvalidAtomLine
+        case InvalidConectLine
+    }
+    
+    
     private func substring(_ input: String, from start: Int, to end: Int) -> String? {
         guard start >= 0, end < input.count, start <= end else {
             return nil
@@ -41,25 +48,39 @@ class PDBParser {
         return value.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    private func parseAtom(_ atoms: inout [Atom], _ line: String) -> Void {
+    private func parseAtom(_ atoms: inout [Atom], _ line: String) throws -> Void {
         guard let indexString = getValue(line, from: 6, to: 10),
-                    let name = getValue(line, from: 12, to: 15),
-                  let xString = getValue(line, from: 30, to: 37),
-                  let yString = getValue(line, from: 38, to: 45),
-                  let zString = getValue(line, from: 46, to: 53),
-                  let element = getValue(line, from: 76, to: 77),
-                  let index = Int(indexString),
-                  let x = Double(xString),
-                  let y = Double(yString),
-                  let z = Double(zString) else {
-                print("error")
-                return
-            }
+              let name = getValue(line, from: 12, to: 15),
+              let xString = getValue(line, from: 30, to: 37),
+              let yString = getValue(line, from: 38, to: 45),
+              let zString = getValue(line, from: 46, to: 53),
+              let element = getValue(line, from: 76, to: 77),
+              let index = Int(indexString),
+              let x = Double(xString),
+              let y = Double(yString),
+              let z = Double(zString) else {
+            throw PDBParserError.InvalidAtomLine
+        }
         
         atoms.append(Atom(index: index, name: name, x: x, y: y, z: z, element: element))
     }
     
-    public func parsePDB(content: String) -> Molecule {
+    private func parseConect(_ atomConnections: inout [Int: [Int]], _ line: String) throws -> Void {
+        guard let mainIndexString = getValue(line, from: 6, to: 10),
+              let mainIndex = Int(mainIndexString) else {
+            throw PDBParserError.InvalidConectLine
+        }
+        
+        for i in stride(from: 11, to: line.count, by: 5) {
+            guard let connectedIndexString = getValue(line, from: i, to: i + 4),
+                  let connectedIndex = Int(connectedIndexString) else {
+                throw PDBParserError.InvalidConectLine
+            }
+            atomConnections[mainIndex, default: []].append(connectedIndex)
+        }
+    }
+    
+    public func parsePDB(content: String) throws -> Molecule {
         var atoms: [Atom] = []
         var atomConnections: [Int: [Int]] = [:]
         
@@ -67,16 +88,22 @@ class PDBParser {
         for line in lines {
             let recordName = getValue(line, from: 0, to: 5)
             if recordName == "ATOM" {
-                parseAtom(&atoms, String(line))
+                try parseAtom(&atoms, line)
             } else if recordName == "CONECT" {
-                
-            } else if recordName == "END" {
-                
+                try parseConect(&atomConnections, line)
+            } else if recordName != "END" {
+                throw PDBParserError.InvalidRecordName
             } else {
-                
+                break
             }
-            
         }
-        return Molecule()
+        
+        for (index, connections) in atomConnections {
+            if index - 1 < atoms.count {
+                atoms[index - 1].connections = connections
+            }
+        }
+        
+        return Molecule(atoms: atoms)
     }
 }
