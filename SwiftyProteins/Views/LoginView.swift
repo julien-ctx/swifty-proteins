@@ -1,31 +1,23 @@
-//
-//  LoginViewController.swift
-//  SwiftyProteins
-//
-//  Created by Minguk on 21/05/2024.
-//
-
-import Foundation
 import SwiftUI
 
 struct LoginView: View {
+    @ObservedObject var viewModel: LoginViewModel
     @Binding var isAuthenticated: Bool
-    @State private var username: String = ""
-    @State private var password: String = ""
-    @State private var showError: Bool = false
-    
+    @State private var showCreateAccount: Bool = false
+
     var body: some View {
         VStack {
-            TextField("Username", text: $username)
+            TextField("Username", text: $viewModel.username)
                 .padding()
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
-            SecureField("Password", text: $password)
+            SecureField("Password", text: $viewModel.password)
                 .padding()
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
             Button(action: {
-                authenticateUser()
+                viewModel.authenticateUser()
+                isAuthenticated = viewModel.isAuthenticated
             }) {
                 Text("Login")
                     .padding()
@@ -34,28 +26,32 @@ struct LoginView: View {
                     .cornerRadius(8)
             }
             
-            if showError {
+            if viewModel.showError {
                 Text("Authentication Failed")
                     .foregroundColor(.red)
                     .padding()
             }
+
+            Button(action: {
+                showCreateAccount.toggle()
+            }) {
+                Text("Create Account")
+                    .padding()
+                    .foregroundColor(.blue)
+            }
         }
         .padding()
-    }
-    
-    func authenticateUser() {
-        // Placeholder for actual authentication logic
-        if username == "Test" && password == "password" {
-            isAuthenticated = true
-        } else {
-            showError = true
+        .sheet(isPresented: $showCreateAccount) {
+            CreateAccountView()
+        }
+        .onAppear {
+            viewModel.authenticateWithBiometrics()
         }
     }
 }
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView(isAuthenticated: .constant(false))
+        LoginView(viewModel: LoginViewModel(), isAuthenticated: .constant(false))
     }
 }
-

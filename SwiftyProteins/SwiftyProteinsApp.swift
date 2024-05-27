@@ -16,7 +16,7 @@ struct SwiftyProteinsApp: App {
             if isAuthenticated {
                 ProteinListView()
             } else {
-                LoginView(isAuthenticated: $isAuthenticated)
+                LoginView(viewModel: LoginViewModel(), isAuthenticated: $isAuthenticated)
             }
         }
     }

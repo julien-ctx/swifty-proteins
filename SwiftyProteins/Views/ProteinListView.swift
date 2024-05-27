@@ -18,7 +18,7 @@ struct ProteinListView: View {
                     .padding()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding([.leading, .trailing])
-                    .onChange(of: viewModel.searchQuery) { newValue in
+                    .onChange(of: viewModel.searchQuery) { _, _ in
                         viewModel.filterProteins()
                     }
 
