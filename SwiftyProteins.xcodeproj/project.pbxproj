@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F0D887E2C06571900BFDC41 /* swifty-logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 6F0D887D2C06571900BFDC41 /* swifty-logo.png */; };
 		6F413E9A2C0497C8000BAE8F /* db.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F413E992C0497C8000BAE8F /* db.swift */; };
 		6F413E9C2C0497F5000BAE8F /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 6F413E9B2C0497F5000BAE8F /* SQLite */; };
 		6F413E9E2C049A82000BAE8F /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F413E9D2C049A82000BAE8F /* LoginViewModel.swift */; };
@@ -44,6 +45,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6F0D887D2C06571900BFDC41 /* swifty-logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "swifty-logo.png"; path = "../../../../Downloads/swifty-logo.png"; sourceTree = "<group>"; };
 		6F413E992C0497C8000BAE8F /* db.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = db.swift; sourceTree = "<group>"; };
 		6F413E9D2C049A82000BAE8F /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		6F413E9F2C049AD7000BAE8F /* CreateAccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewModel.swift; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 		6FEE429D2BFC113200D974B8 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				6F0D887D2C06571900BFDC41 /* swifty-logo.png */,
 				6FEE429B2BFC10C600D974B8 /* ligand.txt */,
 			);
 			path = Resources;
@@ -291,6 +294,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7BAA54E2BF88B740046F051 /* Preview Assets.xcassets in Resources */,
+				6F0D887E2C06571900BFDC41 /* swifty-logo.png in Resources */,
 				6FEE429C2BFC10C700D974B8 /* ligand.txt in Resources */,
 				B7BAA54B2BF88B740046F051 /* Assets.xcassets in Resources */,
 				6FEE42AC2BFCE9D000D974B8 /* LaunchScreen.storyboard in Resources */,
@@ -495,6 +499,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -523,6 +528,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
