@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct ProteinView: View {
-    var proteinType: String
+    let proteinType: String
     
     @StateObject private var viewModel = ProteinViewModel()
     
@@ -22,13 +22,9 @@ struct ProteinView: View {
                 Text(error)
                     .foregroundColor(.red)
                     .padding()
-            } else if let pdbContent = viewModel.pdbContent {
-                Text("3D Rendering for Protein: \(proteinType)")
-                    .padding()
-                ScrollView {
-                    Text(pdbContent)
-                        .padding()
-                }
+            } else if let molecule = viewModel.molecule {
+                MoleculeView(molecule: molecule)
+                    .frame(width: 400, height: 400)
             } else {
                 Text("No data to display")
                     .padding()
@@ -39,8 +35,6 @@ struct ProteinView: View {
             viewModel.getProteinData(for: proteinType) { success in
                 if success {
                     viewModel.getMolecule()
-                } else {
-                    print("Failed to get protein data")
                 }
             }
         }

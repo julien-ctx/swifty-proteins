@@ -17,18 +17,14 @@ class ProteinViewModel: ObservableObject {
         self.isLoading = true
         
         guard let firstProteinChar = protein.first else {
-            print("Protein name is empty")
             self.error = "Invalid protein name"
             self.isLoading = false
             completion(false)
             return
         }
         
-        let urlString = "https://files.rcsb.org/ligands/\(firstProteinChar)/\(protein)/\(protein)_ideal.pdb"
-        print(urlString)
-        
+        let urlString = "https://files.rcsb.org/ligands/\(firstProteinChar)/\(protein)/\(protein)_ideal.pdb"        
         guard let url = URL(string: urlString) else {
-            print("Error while creating URL")
             self.error = "Invalid URL"
             self.isLoading = false
             completion(false)
@@ -39,15 +35,13 @@ class ProteinViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self.isLoading = false
                 
-                if let error = error {
-                    print("Error while retrieving data from RCSB website: \(error.localizedDescription)")
+                if let _ = error {
                     self.error = "Failed to retrieve data"
                     completion(false)
                     return
                 }
                 
                 guard let data = data else {
-                    print("Error: No data received")
                     self.error = "No data received"
                     completion(false)
                     return
@@ -63,7 +57,6 @@ class ProteinViewModel: ObservableObject {
     func getMolecule() -> Void {
         let pdbParser = PDBParser()
         guard let pdbContent = pdbContent else {
-            print("Failed to parse PDB file")
             self.error = "Invalid PDB file"
             return
         }
@@ -72,14 +65,14 @@ class ProteinViewModel: ObservableObject {
         } catch let error as PDBParser.PDBParserError {
             switch error {
             case .InvalidRecordName:
-                print("InvalidRecordName")
+                self.error = "Invalid record name in file"
             case .InvalidAtomLine:
-                print("InvalidAtomLine")
+                self.error = "Invalid ATOM line in file"
             case .InvalidConectLine:
-                print("InvalidConectLine")
+                self.error = "Invalid ATOM CONECT line in file"
             }
         } catch {
-            print("An unexpected error occurred")
+            self.error = "Something unexpected happened"
         }
     }
 }
