@@ -18,8 +18,7 @@ struct ProteinListView: View {
                     Text(protein)
                 }
             }
-            .navigationTitle("Proteins")
-        }
+            .navigationTitle("Proteins")        }
     }
 }
 

@@ -24,13 +24,15 @@ struct ProteinView: View {
                     .padding()
             } else if let molecule = viewModel.molecule {
                 MoleculeView(molecule: molecule)
-                    .frame(width: 400, height: 400)
             } else {
                 Text("No data to display")
                     .padding()
             }
         }
+        .toolbarBackground(Color(white: 0.95), for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .navigationTitle(proteinType)
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             viewModel.getProteinData(for: proteinType) { success in
                 if success {

@@ -28,7 +28,7 @@ struct MoleculeView: UIViewRepresentable {
         let scene = SCNScene()
         
         for atom in molecule.atoms {
-            let sphere = SCNSphere(radius: 0.2)
+            let sphere = SCNSphere(radius: 0.3)
             sphere.firstMaterial?.diffuse.contents = getColor(for: atom.element)
             let node = SCNNode(geometry: sphere)
             node.position = SCNVector3(atom.x, atom.y, atom.z)
