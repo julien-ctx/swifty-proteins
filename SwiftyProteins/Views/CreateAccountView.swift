@@ -11,11 +11,14 @@ import SwiftUI
 struct CreateAccountView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var viewModel = CreateAccountViewModel()
+    @Binding var showCreateAccount: Bool
 
     var body: some View {
         VStack {
             TextField("Username", text: $viewModel.username)
                 .padding()
+                .autocorrectionDisabled()
+                .autocapitalization(.none)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
             SecureField("Password", text: $viewModel.password)
@@ -28,7 +31,9 @@ struct CreateAccountView: View {
             .padding()
             
             Button(action: {
-                viewModel.createUser()
+                if viewModel.createUser() {
+                    showCreateAccount = false
+                }
             }) {
                 Text("Create Account")
                     .padding()
@@ -39,14 +44,6 @@ struct CreateAccountView: View {
 
         }
         .padding()
-        .navigationBarTitle("Create Account", displayMode: .inline)
-        .navigationBarItems(leading: Button(action: {
-            presentationMode.wrappedValue.dismiss()
-        }) {
-            Image(systemName: "arrow.left")
-                .foregroundColor(.blue)
-                .padding()
-        })
         .alert(isPresented: $viewModel.showAlert) {
             Alert(
                 title: Text(viewModel.alertTitle),
@@ -59,6 +56,6 @@ struct CreateAccountView: View {
 
 struct CreateAccountView_Previews: PreviewProvider {
     static var previews: some View {
-        CreateAccountView()
+        CreateAccountView(showCreateAccount: .constant(false))
     }
 }

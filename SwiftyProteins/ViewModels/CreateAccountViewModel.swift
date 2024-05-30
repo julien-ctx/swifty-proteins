@@ -21,29 +21,29 @@ class CreateAccountViewModel: ObservableObject {
     @Published var showAlert: Bool = false
     @Published var alertTitle: String = ""
     @Published var alertMessage: String = ""
-
-    func createUser() {
+    
+    func createUser() -> Bool {
         if !validateUsername() {
             showAlert = true
             alertTitle = "Invalid Username"
             alertMessage = "Username must be 4-20 characters long and can contain letters, numbers, '-' or '_'. It cannot start with '-' or '_'."
-            return
+            return false
         }
         
         if !validatePassword() {
             showAlert = true
             alertTitle = "Invalid Password"
             alertMessage = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number."
-            return
+            return false
         }
         
-        if SQLiteManager.shared.addUser(username: username, password: password) {
-            // Store biometric preference (this example uses UserDefaults for simplicity)
-            UserDefaults.standard.set(useBiometrics, forKey: "\(username)_biometrics")
+        if SQLiteManager.shared.addUser(username: username, password: password, useBiometrics: useBiometrics) {
+            return true
         } else {
             showAlert = true
             alertTitle = "Account Creation Failed"
             alertMessage = "Failed to create account. Username might already be taken."
+            return false
         }
     }
     
@@ -63,7 +63,7 @@ class CreateAccountViewModel: ObservableObject {
             return false
         }
 
-        let passwordRegex = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$"
+        let passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$&*]).{8,}$"
         if NSPredicate(format: "SELF MATCHES %@", passwordRegex).evaluate(with: password) {
             return true
         } else {
@@ -83,5 +83,4 @@ class CreateAccountViewModel: ObservableObject {
             useBiometrics = false
         }
     }
-
 }
