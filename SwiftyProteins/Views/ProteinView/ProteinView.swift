@@ -33,6 +33,15 @@ struct ProteinView: View {
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationTitle(proteinType)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    viewModel.shareProtein()
+                }) {
+                    Image(systemName: "square.and.arrow.up")
+                }
+            }
+        }
         .onAppear {
             viewModel.getProteinData(for: proteinType) { success in
                 if success {

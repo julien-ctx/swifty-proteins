@@ -81,4 +81,8 @@ class ProteinViewModel: ObservableObject {
     func onError(_ currentError: String) -> Void {
         error = currentError
     }
+    
+    func shareProtein() -> Void {
+        
+    }
 }
