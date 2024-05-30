@@ -23,7 +23,7 @@ struct ProteinView: View {
                     .foregroundColor(.red)
                     .padding()
             } else if let molecule = viewModel.molecule {
-                MoleculeView(molecule: molecule)
+                MoleculeView(molecule: molecule, onError: viewModel.onError(_:))
             } else {
                 Text("No data to display")
                     .padding()

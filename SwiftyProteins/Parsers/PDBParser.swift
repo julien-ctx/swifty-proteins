@@ -10,9 +10,9 @@ import Foundation
 struct Atom {
     var index: Int
     var name: String
-    var x: Double
-    var y: Double
-    var z: Double
+    var x: Float
+    var y: Float
+    var z: Float
     var element: String
     var connections: [Int] = []
 }
@@ -26,8 +26,8 @@ class PDBParser {
         case InvalidRecordName
         case InvalidAtomLine
         case InvalidConectLine
+        case InvalidAtomNumber
     }
-    
     
     private func substring(_ input: String, from start: Int, to end: Int) -> String? {
         guard start >= 0, end < input.count, start <= end else {
@@ -56,9 +56,9 @@ class PDBParser {
               let zString = getValue(line, from: 46, to: 53),
               let element = getValue(line, from: 76, to: 77),
               let index = Int(indexString),
-              let x = Double(xString),
-              let y = Double(yString),
-              let z = Double(zString) else {
+              let x = Float(xString),
+              let y = Float(yString),
+              let z = Float(zString) else {
             throw PDBParserError.InvalidAtomLine
         }
         
@@ -104,6 +104,12 @@ class PDBParser {
             }
         }
         
-        return Molecule(atoms: atoms)
+        let molecule: Molecule = Molecule(atoms: atoms)
+        
+        if molecule.atoms.isEmpty {
+            throw PDBParserError.InvalidAtomNumber
+        }
+        
+        return molecule
     }
 }

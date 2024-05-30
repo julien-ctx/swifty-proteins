@@ -11,65 +11,130 @@ import SceneKit
 
 struct MoleculeView: UIViewRepresentable {
     var molecule: Molecule
+    var onError: (String) -> Void
+    
+    // Coordinator is used to have mutable variables because struct is immutable.
+    class Coordinator {
+        var minX: Float?
+        var maxX: Float?
+        var minY: Float?
+        var maxY: Float?
+        var minZ: Float?
+        var maxZ: Float?
+        
+        init() {}
+        
+        func getMinMax(molecule: Molecule) {
+            minX = molecule.atoms.min(by: { $0.x < $1.x })?.x
+            maxX = molecule.atoms.max(by: { $0.x < $1.x })?.x
+            minY = molecule.atoms.min(by: { $0.y < $1.y })?.y
+            maxY = molecule.atoms.max(by: { $0.y < $1.y })?.y
+            minZ = molecule.atoms.min(by: { $0.z < $1.z })?.z
+            maxZ = molecule.atoms.max(by: { $0.z < $1.z })?.z
+        }
+    }
+    
+    // Required method
+    func makeCoordinator() -> Coordinator {
+        return Coordinator()
+    }
     
     // Required method
     func makeUIView(context: Context) -> SCNView {
         let scnView = SCNView()
         scnView.allowsCameraControl = true
         scnView.autoenablesDefaultLighting = true
-        scnView.scene = createScene()
+        
+        context.coordinator.getMinMax(molecule: molecule)
+        scnView.scene = createScene(coordinator: context.coordinator)
         return scnView
     }
     
     // Required method
     func updateUIView(_ uiView: SCNView, context: Context) {}
     
-    private func createScene() -> SCNScene {
+    private func createScene(coordinator: Coordinator) -> SCNScene {
         var scene = SCNScene()
         
         for atom in molecule.atoms {
-            let sphere = SCNSphere(radius: 0.3)
-            sphere.firstMaterial?.diffuse.contents = getColor(for: atom.element)
-            let node = SCNNode(geometry: sphere)
-            node.position = SCNVector3(atom.x, atom.y, atom.z)
-            scene.rootNode.addChildNode(node)
+            addAtom(for: &scene, atom)
+            addConnections(for: &scene, atom)
         }
-        
-        addCamera(for: &scene)
+        addCamera(for: &scene, coordinator: coordinator)
         
         return scene
     }
     
-    private func degreesToRadians(_ number: Double) -> Double {
+    private func degreesToRadians(_ number: Float) -> Float {
         return number * .pi / 180
     }
     
+    private func addAtom(for scene: inout SCNScene, _ atom: Atom) -> Void {
+        let sphere = SCNSphere(radius: 0.3)
+        sphere.firstMaterial?.diffuse.contents = getColor(for: atom.element)
+        let node = SCNNode(geometry: sphere)
+        node.position = SCNVector3(atom.x, atom.y, atom.z)
+        scene.rootNode.addChildNode(node)
+    }
+    
+    private func getAtomCoordinates(for index: Int) -> SCNVector3 {
+        let result = molecule.atoms.first(where: { value -> Bool in
+            value.index == index
+        })
+        guard let result = result else {
+            onError("Invalid atom specified in CONECT line")
+            return SCNVector3(x: 0, y: 0, z: 0)
+        }
+        return SCNVector3(x: result.x, y: result.y, z: result.z)
+    }
+    
+    // https://stackoverflow.com/questions/58470229/how-to-draw-a-line-between-two-points-in-scenekit
+    private func addConnections(for scene: inout SCNScene, _ atom: Atom) -> Void {
+        for connection in atom.connections {
+            let from: SCNVector3 = SCNVector3(x: atom.x, y: atom.y, z: atom.z)
+            let to: SCNVector3 = getAtomCoordinates(for: connection)
+            
+            let dx = to.x - from.x
+            let dy = to.y - from.y
+            let dz = to.z - from.z
+            let distance = sqrtf(dx * dx + dy * dy + dz * dz)
+            
+            let cylinder = SCNCylinder(radius: 0.05, height: CGFloat(distance))
+            cylinder.firstMaterial?.diffuse.contents = UIColor.gray
+            
+            let lineNode = SCNNode(geometry: cylinder)
+            lineNode.position = SCNVector3(x: (from.x + to.x) / 2,
+                                           y: (from.y + to.y) / 2,
+                                           z: (from.z + to.z) / 2)
+            
+            lineNode.look(at: to, up: scene.rootNode.worldUp, localFront: lineNode.worldUp)
+            
+            scene.rootNode.addChildNode(lineNode)
+        }
+    }
+
     // https://stackoverflow.com/questions/21544336/how-to-position-the-camera-so-that-my-main-object-is-entirely-visible-and-fit-to
     // https://forum.unity.com/threads/fit-object-exactly-into-perspective-cameras-field-of-view-focus-the-object.496472/
-    private func addCamera(for scene: inout SCNScene) -> Void {
+    private func addCamera(for scene: inout SCNScene, coordinator: Coordinator) -> Void {
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         
-        let minAtomX = molecule.atoms.min { $0.x < $1.x }
-        let maxAtomX = molecule.atoms.max { $0.x < $1.x }
+        guard let minX = coordinator.minX, let maxX = coordinator.maxX, let minZ = coordinator.minZ, let maxZ = coordinator.maxZ, let minY = coordinator.minY, let maxY = coordinator.maxY else {
+            onError("Camera position could not be computed")
+            return
+        }
         
-        let minAtomY = molecule.atoms.min { $0.y < $1.y }
-        let maxAtomY = molecule.atoms.max { $0.y < $1.y }
-        
-        let minAtomZ = molecule.atoms.min { $0.z < $1.z }
-        let maxAtomZ = molecule.atoms.max { $0.z < $1.z }
-        
-        if let minX = minAtomX?.x, let maxX = maxAtomX?.x, let minZ = minAtomZ?.z, let maxZ = maxAtomZ?.z, let minY = minAtomY?.y, let maxY = maxAtomY?.y, let fov = cameraNode.camera?.fieldOfView {
-            
-            let cameraDistance = 2.0;
-            let proteinSize = [maxX - minX, maxY - minY, maxZ - minZ].max()
-            let cameraView = 2.0 * tan(0.5 * degreesToRadians(fov))
+        if let fov = cameraNode.camera?.fieldOfView {
+            let cameraDistance: Float = 2.0
+            let proteinSize: Float? = [maxX - minX, maxY - minY, maxZ - minZ].max()
+            let cameraView: Float = 2.0 * tan(degreesToRadians(Float(fov)) / 2)
             
             guard let maxSize = proteinSize else {
+                onError("Protein size could not be computed")
                 return
             }
-            var distance = cameraDistance * maxSize / cameraView
-            distance += 0.5 * maxSize;
+            var distance: Float = cameraDistance * maxSize / cameraView
+            distance += 0.5 * maxSize
             
             cameraNode.position = SCNVector3(x: 0, y: 0, z: Float(distance))
             scene.rootNode.addChildNode(cameraNode)
@@ -112,4 +177,3 @@ struct MoleculeView: UIViewRepresentable {
         }
     }
 }
-

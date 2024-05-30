@@ -23,7 +23,7 @@ class ProteinViewModel: ObservableObject {
             return
         }
         
-        let urlString = "https://files.rcsb.org/ligands/\(firstProteinChar)/\(protein)/\(protein)_ideal.pdb"        
+        let urlString = "https://files.rcsb.org/ligands/\(firstProteinChar)/\(protein)/\(protein)_ideal.pdb"
         guard let url = URL(string: urlString) else {
             self.error = "Invalid URL"
             self.isLoading = false
@@ -70,9 +70,15 @@ class ProteinViewModel: ObservableObject {
                 self.error = "Invalid ATOM line in file"
             case .InvalidConectLine:
                 self.error = "Invalid ATOM CONECT line in file"
+            case .InvalidAtomNumber:
+                self.error = "No atom found in protein"
             }
         } catch {
             self.error = "Something unexpected happened"
         }
+    }
+    
+    func onError(_ currentError: String) -> Void {
+        error = currentError
     }
 }
