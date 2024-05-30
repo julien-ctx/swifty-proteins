@@ -12,6 +12,7 @@ struct ProteinView: View {
     let proteinType: String
     
     @StateObject private var viewModel = ProteinViewModel()
+    @State private var showingSettings = false
     
     var body: some View {
         VStack {
@@ -35,21 +36,58 @@ struct ProteinView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    viewModel.shareProtein()
-                }) {
-                    Image(systemName: "square.and.arrow.up")
+                HStack {
+                    Button(action: {
+                        viewModel.shareProtein()
+                    }) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    
+                    Button(action: {
+                        showingSettings = true
+                    }) {
+                        Image(systemName: "gear")
+                    }
                 }
             }
         }
+        .sheet(isPresented: $showingSettings) {
+            SettingsView(recenterAction: {
+                print("lol")
+            })                }
         .onAppear {
             viewModel.getProteinData(for: proteinType) { success in
                 if success {
                     viewModel.getMolecule()
+                    
                 }
             }
         }
         
+    }
+}
+
+struct SettingsView: View {
+    var recenterAction: () -> Void
+    
+    var body: some View {
+        NavigationView {
+            List {
+                Button(action: recenterAction) {
+                    Text("Recenter Protein")
+                }
+                // Add more options here as needed
+            }
+            .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") {
+                        // Logic to dismiss the modal
+                    }
+                }
+            }
+        }
     }
 }
 
