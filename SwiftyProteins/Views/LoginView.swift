@@ -53,7 +53,7 @@ struct LoginView: View {
                                     isAuthenticated = success
                                 }
                             }) {
-                                Text("Use Face ID")
+                                Text("Use Touch ID / Face ID")
                                     .padding()
                                     .background(Color.blue)
                                     .foregroundColor(.white)

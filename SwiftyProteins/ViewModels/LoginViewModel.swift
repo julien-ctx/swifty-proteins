@@ -53,11 +53,10 @@ class LoginViewModel: ObservableObject {
             self.context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Login to your account.") { success, authenticationError in
                 DispatchQueue.main.async {
                     if success {
-                        print("allo???")
                         self.isAuthenticated = true
                         continuation.resume(returning: true)
                     } else {
-                        self.setError("Face ID Failed", "Biometric authentication failed. Please try again.")
+                        self.setError("Authentication Failed", "Biometric authentication failed. Please try again.")
                         continuation.resume(returning: false)
                     }
                 }
