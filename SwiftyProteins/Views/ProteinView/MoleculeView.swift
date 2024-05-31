@@ -1,10 +1,3 @@
-//
-//  MoleculeView.swift
-//  SwiftyProteins
-//
-//  Created by Julien Caucheteux on 28/05/2024.
-//
-
 import Foundation
 import SwiftUI
 import SceneKit
@@ -21,6 +14,7 @@ struct MoleculeView: UIViewRepresentable {
         var maxY: Float?
         var minZ: Float?
         var maxZ: Float?
+        var cameraNode: SCNNode?
         
         init() {}
         
@@ -31,6 +25,33 @@ struct MoleculeView: UIViewRepresentable {
             maxY = molecule.atoms.max(by: { $0.y < $1.y })?.y
             minZ = molecule.atoms.min(by: { $0.z < $1.z })?.z
             maxZ = molecule.atoms.max(by: { $0.z < $1.z })?.z
+        }
+        
+        func recenterProtein() {
+            guard let cameraNode = cameraNode,
+                  let minX = minX, let maxX = maxX,
+                  let minY = minY, let maxY = maxY,
+                  let minZ = minZ, let maxZ = maxZ else {
+                return
+            }
+            
+            if let fov = cameraNode.camera?.fieldOfView {
+                let cameraDistance: Float = 2.0
+                let proteinSize: Float? = [maxX - minX, maxY - minY, maxZ - minZ].max()
+                let cameraView: Float = 2.0 * tan(Coordinator.degreesToRadians(Float(fov)) / 2)
+                
+                guard let maxSize = proteinSize else {
+                    return
+                }
+                var distance: Float = cameraDistance * maxSize / cameraView
+                distance += 0.5 * maxSize
+                
+                cameraNode.position = SCNVector3(x: 0, y: 0, z: Float(distance))
+            }
+        }
+        
+        static func degreesToRadians(_ number: Float) -> Float {
+            return number * .pi / 180
         }
     }
     
@@ -65,10 +86,6 @@ struct MoleculeView: UIViewRepresentable {
         return scene
     }
     
-    private func degreesToRadians(_ number: Float) -> Float {
-        return number * .pi / 180
-    }
-    
     private func addAtom(for scene: inout SCNScene, _ atom: Atom) -> Void {
         let sphere = SCNSphere(radius: 0.3)
         sphere.firstMaterial?.diffuse.contents = getColor(for: atom.element)
@@ -88,7 +105,6 @@ struct MoleculeView: UIViewRepresentable {
         return SCNVector3(x: result.x, y: result.y, z: result.z)
     }
     
-    // https://stackoverflow.com/questions/58470229/how-to-draw-a-line-between-two-points-in-scenekit
     private func addConnections(for scene: inout SCNScene, _ atom: Atom) -> Void {
         for connection in atom.connections {
             let from: SCNVector3 = SCNVector3(x: atom.x, y: atom.y, z: atom.z)
@@ -112,9 +128,7 @@ struct MoleculeView: UIViewRepresentable {
             scene.rootNode.addChildNode(lineNode)
         }
     }
-
-    // https://stackoverflow.com/questions/21544336/how-to-position-the-camera-so-that-my-main-object-is-entirely-visible-and-fit-to
-    // https://forum.unity.com/threads/fit-object-exactly-into-perspective-cameras-field-of-view-focus-the-object.496472/
+    
     private func addCamera(for scene: inout SCNScene, coordinator: Coordinator) -> Void {
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
@@ -127,7 +141,7 @@ struct MoleculeView: UIViewRepresentable {
         if let fov = cameraNode.camera?.fieldOfView {
             let cameraDistance: Float = 2.0
             let proteinSize: Float? = [maxX - minX, maxY - minY, maxZ - minZ].max()
-            let cameraView: Float = 2.0 * tan(degreesToRadians(Float(fov)) / 2)
+            let cameraView: Float = 2.0 * tan(Coordinator.degreesToRadians(Float(fov)) / 2)
             
             guard let maxSize = proteinSize else {
                 onError("Protein size could not be computed")
@@ -138,6 +152,7 @@ struct MoleculeView: UIViewRepresentable {
             
             cameraNode.position = SCNVector3(x: 0, y: 0, z: Float(distance))
             scene.rootNode.addChildNode(cameraNode)
+            coordinator.cameraNode = cameraNode // Store the reference to the camera node
         }
     }
     

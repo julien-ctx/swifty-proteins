@@ -11,20 +11,22 @@ import SwiftUI
 struct ProteinView: View {
     let proteinType: String
     
-    @StateObject private var viewModel = ProteinViewModel()
+    @StateObject private var proteinViewModel = ProteinViewModel()
     @State private var showingSettings = false
+    
+    @State private var moleculeViewRecenter: (() -> Void)?
     
     var body: some View {
         VStack {
-            if viewModel.isLoading {
+            if proteinViewModel.isLoading {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle()).scaleEffect(3)
-            } else if let error = viewModel.error {
+            } else if let error = proteinViewModel.error {
                 Text(error)
                     .foregroundColor(.red)
                     .padding()
-            } else if let molecule = viewModel.molecule {
-                MoleculeView(molecule: molecule, onError: viewModel.onError(_:))
+            } else if let molecule = proteinViewModel.molecule {
+                MoleculeView(molecule: molecule, onError: proteinViewModel.onError)
             } else {
                 Text("No data to display")
                     .padding()
@@ -38,7 +40,7 @@ struct ProteinView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack {
                     Button(action: {
-                        viewModel.shareProtein()
+                        proteinViewModel.shareProtein()
                     }) {
                         Image(systemName: "square.and.arrow.up")
                     }
@@ -54,11 +56,12 @@ struct ProteinView: View {
         .sheet(isPresented: $showingSettings) {
             SettingsView(recenterAction: {
                 print("lol")
-            })                }
+            }, showSettings: $showingSettings).presentationDetents([.medium])
+        }
         .onAppear {
-            viewModel.getProteinData(for: proteinType) { success in
+            proteinViewModel.getProteinData(for: proteinType) { success in
                 if success {
-                    viewModel.getMolecule()
+                    proteinViewModel.getMolecule()
                     
                 }
             }
@@ -69,21 +72,21 @@ struct ProteinView: View {
 
 struct SettingsView: View {
     var recenterAction: () -> Void
+    @Binding var showSettings: Bool
     
     var body: some View {
         NavigationView {
             List {
                 Button(action: recenterAction) {
-                    Text("Recenter Protein")
+                    Label("Center protein", systemImage: "arrow.right.and.line.vertical.and.arrow.left")
                 }
-                // Add more options here as needed
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") {
-                        // Logic to dismiss the modal
+                        showSettings.toggle()
                     }
                 }
             }
