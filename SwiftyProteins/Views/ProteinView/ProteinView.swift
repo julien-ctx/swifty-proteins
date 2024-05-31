@@ -14,8 +14,6 @@ struct ProteinView: View {
     @StateObject private var proteinViewModel = ProteinViewModel()
     @State private var showingSettings = false
     
-    @State private var moleculeViewRecenter: (() -> Void)?
-    
     var body: some View {
         VStack {
             if proteinViewModel.isLoading {
@@ -26,7 +24,8 @@ struct ProteinView: View {
                     .foregroundColor(.red)
                     .padding()
             } else if let molecule = proteinViewModel.molecule {
-                MoleculeView(molecule: molecule, onError: proteinViewModel.onError)
+                MoleculeView(molecule: molecule, onError: proteinViewModel.onError,             onAtomTouched: { atom in print("Atom touched: \(atom)") }
+)
             } else {
                 Text("No data to display")
                     .padding()

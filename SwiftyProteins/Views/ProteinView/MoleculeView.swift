@@ -5,18 +5,23 @@ import SceneKit
 struct MoleculeView: UIViewRepresentable {
     var molecule: Molecule
     var onError: (String) -> Void
+    var onAtomTouched: (Atom) -> Void
     
-    // Coordinator is used to have mutable variables because struct is immutable.
-    class Coordinator {
+    class Coordinator: NSObject, UIGestureRecognizerDelegate {
         var minX: Float?
         var maxX: Float?
         var minY: Float?
         var maxY: Float?
         var minZ: Float?
         var maxZ: Float?
-        var cameraNode: SCNNode?
+        var molecule: Molecule
+        var scnView: SCNView?
+        var onAtomTouched: (Atom) -> Void
         
-        init() {}
+        init(molecule: Molecule, onAtomTouched: @escaping (Atom) -> Void) {
+            self.molecule = molecule
+            self.onAtomTouched = onAtomTouched
+        }
         
         func getMinMax(molecule: Molecule) {
             minX = molecule.atoms.min(by: { $0.x < $1.x })?.x
@@ -27,88 +32,76 @@ struct MoleculeView: UIViewRepresentable {
             maxZ = molecule.atoms.max(by: { $0.z < $1.z })?.z
         }
         
-        func recenterProtein() {
-            guard let cameraNode = cameraNode,
-                  let minX = minX, let maxX = maxX,
-                  let minY = minY, let maxY = maxY,
-                  let minZ = minZ, let maxZ = maxZ else {
-                return
-            }
+        @objc func handleTap(gestureRecognize: UIGestureRecognizer) {
+            guard let scnView = scnView else { return }
             
-            if let fov = cameraNode.camera?.fieldOfView {
-                let cameraDistance: Float = 2.0
-                let proteinSize: Float? = [maxX - minX, maxY - minY, maxZ - minZ].max()
-                let cameraView: Float = 2.0 * tan(Coordinator.degreesToRadians(Float(fov)) / 2)
-                
-                guard let maxSize = proteinSize else {
-                    return
-                }
-                var distance: Float = cameraDistance * maxSize / cameraView
-                distance += 0.5 * maxSize
-                
-                cameraNode.position = SCNVector3(x: 0, y: 0, z: Float(distance))
+            let location = gestureRecognize.location(in: scnView)
+            let hitResults = scnView.hitTest(location, options: [:])
+            
+            if let result = hitResults.first,
+               let node = result.node as SCNNode?,
+               let atomIndex = node.name,
+               let atom = molecule.atoms.first(where: { "\($0.index)" == atomIndex }) {
+                onAtomTouched(atom)
             }
         }
-        
-        static func degreesToRadians(_ number: Float) -> Float {
-            return number * .pi / 180
-        }
     }
     
-    // Required method
     func makeCoordinator() -> Coordinator {
-        return Coordinator()
+        return Coordinator(molecule: molecule, onAtomTouched: onAtomTouched)
     }
     
-    // Required method
     func makeUIView(context: Context) -> SCNView {
         let scnView = SCNView()
         scnView.allowsCameraControl = true
         scnView.autoenablesDefaultLighting = true
         
+        let tapGesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(gestureRecognize:)))
+        scnView.addGestureRecognizer(tapGesture)
+        
         context.coordinator.getMinMax(molecule: molecule)
-        scnView.scene = createScene(coordinator: context.coordinator)
+        let scene = createScene(coordinator: context.coordinator)
+        scnView.scene = scene
+        context.coordinator.scnView = scnView
+        
         return scnView
     }
     
-    // Required method
     func updateUIView(_ uiView: SCNView, context: Context) {}
     
     private func createScene(coordinator: Coordinator) -> SCNScene {
-        var scene = SCNScene()
+        let scene = SCNScene()
         
         for atom in molecule.atoms {
-            addAtom(for: &scene, atom)
-            addConnections(for: &scene, atom)
+            addAtom(for: scene, atom)
+            addConnections(for: scene, atom)
         }
-        addCamera(for: &scene, coordinator: coordinator)
+        addCamera(for: scene, coordinator: coordinator)
         
         return scene
     }
     
-    private func addAtom(for scene: inout SCNScene, _ atom: Atom) -> Void {
+    private func addAtom(for scene: SCNScene, _ atom: Atom) {
         let sphere = SCNSphere(radius: 0.3)
         sphere.firstMaterial?.diffuse.contents = getColor(for: atom.element)
         let node = SCNNode(geometry: sphere)
         node.position = SCNVector3(atom.x, atom.y, atom.z)
+        node.name = "\(atom.index)"
         scene.rootNode.addChildNode(node)
     }
     
     private func getAtomCoordinates(for index: Int) -> SCNVector3 {
-        let result = molecule.atoms.first(where: { value -> Bool in
-            value.index == index
-        })
-        guard let result = result else {
+        guard let result = molecule.atoms.first(where: { $0.index == index }) else {
             onError("Invalid atom specified in CONECT line")
             return SCNVector3(x: 0, y: 0, z: 0)
         }
         return SCNVector3(x: result.x, y: result.y, z: result.z)
     }
     
-    private func addConnections(for scene: inout SCNScene, _ atom: Atom) -> Void {
+    private func addConnections(for scene: SCNScene, _ atom: Atom) {
         for connection in atom.connections {
-            let from: SCNVector3 = SCNVector3(x: atom.x, y: atom.y, z: atom.z)
-            let to: SCNVector3 = getAtomCoordinates(for: connection)
+            let from = SCNVector3(x: atom.x, y: atom.y, z: atom.z)
+            let to = getAtomCoordinates(for: connection)
             
             let dx = to.x - from.x
             let dy = to.y - from.y
@@ -119,17 +112,15 @@ struct MoleculeView: UIViewRepresentable {
             cylinder.firstMaterial?.diffuse.contents = UIColor.gray
             
             let lineNode = SCNNode(geometry: cylinder)
-            lineNode.position = SCNVector3(x: (from.x + to.x) / 2,
-                                           y: (from.y + to.y) / 2,
-                                           z: (from.z + to.z) / 2)
+            lineNode.position = SCNVector3(x: (from.x + to.x) / 2, y: (from.y + to.y) / 2, z: (from.z + to.z) / 2)
             
             lineNode.look(at: to, up: scene.rootNode.worldUp, localFront: lineNode.worldUp)
             
             scene.rootNode.addChildNode(lineNode)
         }
     }
-    
-    private func addCamera(for scene: inout SCNScene, coordinator: Coordinator) -> Void {
+
+    private func addCamera(for scene: SCNScene, coordinator: Coordinator) {
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         
@@ -141,7 +132,7 @@ struct MoleculeView: UIViewRepresentable {
         if let fov = cameraNode.camera?.fieldOfView {
             let cameraDistance: Float = 2.0
             let proteinSize: Float? = [maxX - minX, maxY - minY, maxZ - minZ].max()
-            let cameraView: Float = 2.0 * tan(Coordinator.degreesToRadians(Float(fov)) / 2)
+            let cameraView: Float = 2.0 * tan(degreesToRadians(Float(fov)) / 2)
             
             guard let maxSize = proteinSize else {
                 onError("Protein size could not be computed")
@@ -152,11 +143,13 @@ struct MoleculeView: UIViewRepresentable {
             
             cameraNode.position = SCNVector3(x: 0, y: 0, z: Float(distance))
             scene.rootNode.addChildNode(cameraNode)
-            coordinator.cameraNode = cameraNode // Store the reference to the camera node
         }
     }
     
-    // https://en.wikipedia.org/wiki/CPK_coloring
+    private func degreesToRadians(_ number: Float) -> Float {
+        return number * .pi / 180
+    }
+    
     private func getColor(for element: String) -> UIColor {
         switch element {
         case "H":
