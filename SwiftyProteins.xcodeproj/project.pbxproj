@@ -14,6 +14,8 @@
 		6FEE42AC2BFCE9D000D974B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6FEE42AB2BFCE9D000D974B8 /* LaunchScreen.storyboard */; };
 		6FEE42B12BFE3FD800D974B8 /* ProteinListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE42B02BFE3FD800D974B8 /* ProteinListViewModel.swift */; };
 		B7013A7A2C0665A700765EE4 /* MoleculeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7013A792C0665A700765EE4 /* MoleculeView.swift */; };
+		B70CB4002C0B7EFC0092A112 /* ProteinErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70CB3FF2C0B7EFC0092A112 /* ProteinErrorView.swift */; };
+		B70CB4022C0B88570092A112 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70CB4012C0B88570092A112 /* SettingsView.swift */; };
 		B762F4942C039A5B00D6CCB0 /* ProteinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B762F4932C039A5B00D6CCB0 /* ProteinViewModel.swift */; };
 		B762F4972C03BBE300D6CCB0 /* PDBParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B762F4962C03BBE300D6CCB0 /* PDBParser.swift */; };
 		B7BAA5472BF88B730046F051 /* SwiftyProteinsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7BAA5462BF88B730046F051 /* SwiftyProteinsApp.swift */; };
@@ -49,6 +51,8 @@
 		6FEE42AB2BFCE9D000D974B8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6FEE42B02BFE3FD800D974B8 /* ProteinListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinListViewModel.swift; sourceTree = "<group>"; };
 		B7013A792C0665A700765EE4 /* MoleculeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoleculeView.swift; sourceTree = "<group>"; };
+		B70CB3FF2C0B7EFC0092A112 /* ProteinErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinErrorView.swift; sourceTree = "<group>"; };
+		B70CB4012C0B88570092A112 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		B762F4932C039A5B00D6CCB0 /* ProteinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinViewModel.swift; sourceTree = "<group>"; };
 		B762F4962C03BBE300D6CCB0 /* PDBParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDBParser.swift; sourceTree = "<group>"; };
 		B7BAA5432BF88B730046F051 /* SwiftyProteins.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftyProteins.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -119,6 +123,8 @@
 			children = (
 				6FEE42A32BFC158700D974B8 /* ProteinView.swift */,
 				B7013A792C0665A700765EE4 /* MoleculeView.swift */,
+				B70CB3FF2C0B7EFC0092A112 /* ProteinErrorView.swift */,
+				B70CB4012C0B88570092A112 /* SettingsView.swift */,
 			);
 			path = ProteinView;
 			sourceTree = "<group>";
@@ -323,10 +329,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B70CB4002C0B7EFC0092A112 /* ProteinErrorView.swift in Sources */,
 				B762F4972C03BBE300D6CCB0 /* PDBParser.swift in Sources */,
 				B762F4942C039A5B00D6CCB0 /* ProteinViewModel.swift in Sources */,
 				6FEE42B12BFE3FD800D974B8 /* ProteinListViewModel.swift in Sources */,
 				6FEE42A02BFC157200D974B8 /* LoginView.swift in Sources */,
+				B70CB4022C0B88570092A112 /* SettingsView.swift in Sources */,
 				6FEE42A42BFC158700D974B8 /* ProteinView.swift in Sources */,
 				6FEE42A22BFC157E00D974B8 /* ProteinListView.swift in Sources */,
 				B7013A7A2C0665A700765EE4 /* MoleculeView.swift in Sources */,

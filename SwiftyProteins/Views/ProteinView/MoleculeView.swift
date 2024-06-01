@@ -1,3 +1,10 @@
+//
+//  MoleculeView.swift
+//  SwiftyProteins
+//
+//  Created by Julien Caucheteux on 28/05/2024.
+//
+
 import Foundation
 import SwiftUI
 import SceneKit
@@ -126,6 +133,7 @@ let elementNames: [String: String] = [
 struct MoleculeView: UIViewRepresentable {
     var molecule: Molecule
     
+    // Coordinator is used to have mutable variables because struct is immutable.
     class Coordinator: NSObject, UIGestureRecognizerDelegate {
         var minX: Float?
         var maxX: Float?
@@ -145,21 +153,23 @@ struct MoleculeView: UIViewRepresentable {
             guard let scnView = scnView else { return }
             
             let location = gestureRecognize.location(in: scnView)
-            let hitResults = scnView.hitTest(location, options: [:])
             
-            // Remove existing tooltip
-            tooltipView?.removeFromSuperview()
-            tooltipView = nil
-            
-            if let result = hitResults.first,
-               let node = result.node as SCNNode?,
-               let atomIndex = node.name,
-               let atom = molecule.atoms.first(where: { "\($0.index)" == atomIndex }) {
+            DispatchQueue.global(qos: .userInitiated).async {
+                let hitResults = scnView.hitTest(location, options: [:])
+                
                 DispatchQueue.main.async {
-                    if let elementFullName = elementNames[atom.element] {
-                        self.showTooltip(at: location, text: "\(atom.element) - \(elementFullName)")
-                    } else {
-                        self.showTooltip(at: location, text: "\(atom.element)")
+                    self.tooltipView?.removeFromSuperview()
+                    self.tooltipView = nil
+                    
+                    if let result = hitResults.first,
+                       let node = result.node as SCNNode?,
+                       let atomIndex = node.name,
+                       let atom = self.molecule.atoms.first(where: { "\($0.index)" == atomIndex }) {
+                        if let elementFullName = elementNames[atom.element] {
+                            self.showTooltip(at: location, text: "\(atom.element) - \(elementFullName)")
+                        } else {
+                            self.showTooltip(at: location, text: "\(atom.element)")
+                        }
                     }
                 }
             }
@@ -233,8 +243,13 @@ struct MoleculeView: UIViewRepresentable {
         
         context.coordinator.scnView = scnView
         
-        let scene = createScene(coordinator: context.coordinator)
-        scnView.scene = scene
+        DispatchQueue.global(qos: .userInitiated).async {
+            let scene = self.createScene(coordinator: context.coordinator)
+            
+            DispatchQueue.main.async {
+                scnView.scene = scene
+            }
+        }
         
         return scnView
     }
@@ -270,6 +285,7 @@ struct MoleculeView: UIViewRepresentable {
         return SCNVector3(x: result.x, y: result.y, z: result.z)
     }
     
+    // https://stackoverflow.com/questions/58470229/how-to-draw-a-line-between-two-points-in-scenekit
     private func addConnections(for scene: SCNScene, _ atom: Atom) {
         for connection in atom.connections {
             let from = SCNVector3(x: atom.x, y: atom.y, z: atom.z)
@@ -292,17 +308,19 @@ struct MoleculeView: UIViewRepresentable {
         }
     }
     
+    // https://stackoverflow.com/questions/21544336/how-to-position-the-camera-so-that-my-main-object-is-entirely-visible-and-fit-to
+    // https://forum.unity.com/threads/fit-object-exactly-into-perspective-cameras-field-of-view-focus-the-object.496472/
     private func addCamera(for scene: SCNScene, coordinator: Coordinator) {
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         
-        // Compute camera position based on the molecule size
         let cameraPosition = coordinator.computeCameraPosition()
         cameraNode.position = cameraPosition
         
         scene.rootNode.addChildNode(cameraNode)
     }
     
+    // https://en.wikipedia.org/wiki/CPK_coloring
     private func getColor(for element: String) -> UIColor {
         switch element {
         case "H":

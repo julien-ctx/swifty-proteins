@@ -20,9 +20,7 @@ struct ProteinView: View {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle()).scaleEffect(3)
             } else if let error = proteinViewModel.error {
-                Text(error)
-                    .foregroundColor(.red)
-                    .padding()
+               ProteinErrorView(error: error)
             } else if let molecule = proteinViewModel.molecule {
                 MoleculeView(molecule: molecule)
             } else {
@@ -65,30 +63,6 @@ struct ProteinView: View {
             }
         }
         
-    }
-}
-
-struct SettingsView: View {
-    var recenterAction: () -> Void
-    @Binding var showSettings: Bool
-    
-    var body: some View {
-        NavigationView {
-            List {
-                Button(action: recenterAction) {
-                    Label("Center protein", systemImage: "arrow.right.and.line.vertical.and.arrow.left")
-                }
-            }
-            .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") {
-                        showSettings.toggle()
-                    }
-                }
-            }
-        }
     }
 }
 
