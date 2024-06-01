@@ -132,6 +132,7 @@ let elementNames: [String: String] = [
 
 struct MoleculeView: UIViewRepresentable {
     var molecule: Molecule
+    var onImageGenerated: ((UIImage) -> Void)
     
     // Coordinator is used to have mutable variables because struct is immutable.
     class Coordinator: NSObject, UIGestureRecognizerDelegate {
@@ -234,25 +235,28 @@ struct MoleculeView: UIViewRepresentable {
     }
     
     func makeUIView(context: Context) -> SCNView {
-        let scnView = SCNView()
-        scnView.allowsCameraControl = true
-        scnView.autoenablesDefaultLighting = true
-        
-        let tapGesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(gestureRecognize:)))
-        scnView.addGestureRecognizer(tapGesture)
-        
-        context.coordinator.scnView = scnView
-        
-        DispatchQueue.global(qos: .userInitiated).async {
-            let scene = self.createScene(coordinator: context.coordinator)
+            let scnView = SCNView()
+            scnView.allowsCameraControl = true
+            scnView.autoenablesDefaultLighting = true
             
-            DispatchQueue.main.async {
-                scnView.scene = scene
+            let tapGesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(gestureRecognize:)))
+            scnView.addGestureRecognizer(tapGesture)
+            
+            context.coordinator.scnView = scnView
+            
+            DispatchQueue.global(qos: .userInitiated).async {
+                let scene = self.createScene(coordinator: context.coordinator)
+                
+                DispatchQueue.main.async {
+                    scnView.scene = scene
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        self.onImageGenerated(scnView.snapshot())
+                    }
+                }
             }
+            
+            return scnView
         }
-        
-        return scnView
-    }
     
     func updateUIView(_ uiView: SCNView, context: Context) {}
     

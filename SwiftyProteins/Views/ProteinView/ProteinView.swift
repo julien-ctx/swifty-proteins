@@ -12,7 +12,8 @@ struct ProteinView: View {
     let proteinType: String
     
     @StateObject private var proteinViewModel = ProteinViewModel()
-    @State private var showingSettings = false
+    @State private var proteinImage: UIImage?
+    @State private var shareURL: URL?
     
     var body: some View {
         VStack {
@@ -20,9 +21,11 @@ struct ProteinView: View {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle()).scaleEffect(3)
             } else if let error = proteinViewModel.error {
-               ProteinErrorView(error: error)
+                ProteinErrorView(error: error)
             } else if let molecule = proteinViewModel.molecule {
-                MoleculeView(molecule: molecule)
+                MoleculeView(molecule: molecule, onImageGenerated: { image in
+                    proteinImage = image
+                })
             } else {
                 Text("No data to display")
                     .padding()
@@ -34,38 +37,46 @@ struct ProteinView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                HStack {
-                    Button(action: {
-                        proteinViewModel.shareProtein()
-                    }) {
-                        Image(systemName: "square.and.arrow.up")
-                    }
-                    
-                    Button(action: {
-                        showingSettings = true
-                    }) {
-                        Image(systemName: "gear")
+                Group {
+                    if proteinViewModel.molecule != nil, let image = proteinImage {
+                        Button(action: {
+                            shareProteinImage(image: image, proteinType: proteinType)
+                        }) {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                    } else if proteinViewModel.error == nil {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
                     }
                 }
             }
-        }
-        .sheet(isPresented: $showingSettings) {
-            SettingsView(recenterAction: {
-                print("lol")
-            }, showSettings: $showingSettings).presentationDetents([.medium])
         }
         .onAppear {
             proteinViewModel.getProteinData(for: proteinType) { success in
                 if success {
                     proteinViewModel.getMolecule()
-                    
                 }
             }
         }
-        
     }
 }
 
+
+func shareProteinImage(image: UIImage, proteinType: String) {
+    let message = "Look at protein \(proteinType)"
+    let activityViewController = UIActivityViewController(activityItems: [message, image], applicationActivities: nil)
+    
+    if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+        if let topController = scene.windows.first?.rootViewController {
+            if let popoverController = activityViewController.popoverPresentationController {
+                popoverController.sourceView = topController.view
+                popoverController.sourceRect = CGRect(x: topController.view.bounds.midX, y: topController.view.bounds.midY, width: 0, height: 0)
+                popoverController.permittedArrowDirections = []
+            }
+            topController.present(activityViewController, animated: true, completion: nil)
+        }
+    }
+}
 struct ProteinView_Previews: PreviewProvider {
     static var previews: some View {
         ProteinView(proteinType: "Sample Protein")
