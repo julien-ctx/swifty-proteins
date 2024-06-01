@@ -61,22 +61,17 @@ struct ProteinView: View {
     }
 }
 
-
 func shareProteinImage(image: UIImage, proteinType: String) {
     let message = "Look at protein \(proteinType)"
     let activityViewController = UIActivityViewController(activityItems: [message, image], applicationActivities: nil)
     
-    if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-        if let topController = scene.windows.first?.rootViewController {
-            if let popoverController = activityViewController.popoverPresentationController {
-                popoverController.sourceView = topController.view
-                popoverController.sourceRect = CGRect(x: topController.view.bounds.midX, y: topController.view.bounds.midY, width: 0, height: 0)
-                popoverController.permittedArrowDirections = []
-            }
-            topController.present(activityViewController, animated: true, completion: nil)
-        }
+    if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+       let topController = scene.windows.first?.rootViewController {
+        activityViewController.popoverPresentationController?.sourceView = topController.view
+        topController.present(activityViewController, animated: true)
     }
 }
+
 struct ProteinView_Previews: PreviewProvider {
     static var previews: some View {
         ProteinView(proteinType: "Sample Protein")

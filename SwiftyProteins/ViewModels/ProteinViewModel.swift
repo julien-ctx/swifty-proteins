@@ -77,8 +77,4 @@ class ProteinViewModel: ObservableObject {
             self.error = "Something unexpected happened"
         }
     }
-    
-    func shareProtein() -> Void {
-        
-    }
 }

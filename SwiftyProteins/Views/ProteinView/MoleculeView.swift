@@ -235,28 +235,28 @@ struct MoleculeView: UIViewRepresentable {
     }
     
     func makeUIView(context: Context) -> SCNView {
-            let scnView = SCNView()
-            scnView.allowsCameraControl = true
-            scnView.autoenablesDefaultLighting = true
+        let scnView = SCNView()
+        scnView.allowsCameraControl = true
+        scnView.autoenablesDefaultLighting = true
+        
+        let tapGesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(gestureRecognize:)))
+        scnView.addGestureRecognizer(tapGesture)
+        
+        context.coordinator.scnView = scnView
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            let scene = self.createScene(coordinator: context.coordinator)
             
-            let tapGesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(gestureRecognize:)))
-            scnView.addGestureRecognizer(tapGesture)
-            
-            context.coordinator.scnView = scnView
-            
-            DispatchQueue.global(qos: .userInitiated).async {
-                let scene = self.createScene(coordinator: context.coordinator)
-                
-                DispatchQueue.main.async {
-                    scnView.scene = scene
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        self.onImageGenerated(scnView.snapshot())
-                    }
+            DispatchQueue.main.async {
+                scnView.scene = scene
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self.onImageGenerated(scnView.snapshot())
                 }
             }
-            
-            return scnView
         }
+        
+        return scnView
+    }
     
     func updateUIView(_ uiView: SCNView, context: Context) {}
     
