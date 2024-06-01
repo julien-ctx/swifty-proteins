@@ -2,10 +2,129 @@ import Foundation
 import SwiftUI
 import SceneKit
 
+let elementNames: [String: String] = [
+    "H": "Hydrogen",
+    "He": "Helium",
+    "Li": "Lithium",
+    "Be": "Beryllium",
+    "B": "Boron",
+    "C": "Carbon",
+    "N": "Nitrogen",
+    "O": "Oxygen",
+    "F": "Fluorine",
+    "Ne": "Neon",
+    "Na": "Sodium",
+    "Mg": "Magnesium",
+    "Al": "Aluminum",
+    "Si": "Silicon",
+    "P": "Phosphorus",
+    "S": "Sulfur",
+    "Cl": "Chlorine",
+    "Ar": "Argon",
+    "K": "Potassium",
+    "Ca": "Calcium",
+    "Sc": "Scandium",
+    "Ti": "Titanium",
+    "V": "Vanadium",
+    "Cr": "Chromium",
+    "Mn": "Manganese",
+    "Fe": "Iron",
+    "Co": "Cobalt",
+    "Ni": "Nickel",
+    "Cu": "Copper",
+    "Zn": "Zinc",
+    "Ga": "Gallium",
+    "Ge": "Germanium",
+    "As": "Arsenic",
+    "Se": "Selenium",
+    "Br": "Bromine",
+    "Kr": "Krypton",
+    "Rb": "Rubidium",
+    "Sr": "Strontium",
+    "Y": "Yttrium",
+    "Zr": "Zirconium",
+    "Nb": "Niobium",
+    "Mo": "Molybdenum",
+    "Tc": "Technetium",
+    "Ru": "Ruthenium",
+    "Rh": "Rhodium",
+    "Pd": "Palladium",
+    "Ag": "Silver",
+    "Cd": "Cadmium",
+    "In": "Indium",
+    "Sn": "Tin",
+    "Sb": "Antimony",
+    "Te": "Tellurium",
+    "I": "Iodine",
+    "Xe": "Xenon",
+    "Cs": "Cesium",
+    "Ba": "Barium",
+    "La": "Lanthanum",
+    "Ce": "Cerium",
+    "Pr": "Praseodymium",
+    "Nd": "Neodymium",
+    "Pm": "Promethium",
+    "Sm": "Samarium",
+    "Eu": "Europium",
+    "Gd": "Gadolinium",
+    "Tb": "Terbium",
+    "Dy": "Dysprosium",
+    "Ho": "Holmium",
+    "Er": "Erbium",
+    "Tm": "Thulium",
+    "Yb": "Ytterbium",
+    "Lu": "Lutetium",
+    "Hf": "Hafnium",
+    "Ta": "Tantalum",
+    "W": "Tungsten",
+    "Re": "Rhenium",
+    "Os": "Osmium",
+    "Ir": "Iridium",
+    "Pt": "Platinum",
+    "Au": "Gold",
+    "Hg": "Mercury",
+    "Tl": "Thallium",
+    "Pb": "Lead",
+    "Bi": "Bismuth",
+    "Po": "Polonium",
+    "At": "Astatine",
+    "Rn": "Radon",
+    "Fr": "Francium",
+    "Ra": "Radium",
+    "Ac": "Actinium",
+    "Th": "Thorium",
+    "Pa": "Protactinium",
+    "U": "Uranium",
+    "Np": "Neptunium",
+    "Pu": "Plutonium",
+    "Am": "Americium",
+    "Cm": "Curium",
+    "Bk": "Berkelium",
+    "Cf": "Californium",
+    "Es": "Einsteinium",
+    "Fm": "Fermium",
+    "Md": "Mendelevium",
+    "No": "Nobelium",
+    "Lr": "Lawrencium",
+    "Rf": "Rutherfordium",
+    "Db": "Dubnium",
+    "Sg": "Seaborgium",
+    "Bh": "Bohrium",
+    "Hs": "Hassium",
+    "Mt": "Meitnerium",
+    "Ds": "Darmstadtium",
+    "Rg": "Roentgenium",
+    "Cn": "Copernicium",
+    "Nh": "Nihonium",
+    "Fl": "Flerovium",
+    "Mc": "Moscovium",
+    "Lv": "Livermorium",
+    "Ts": "Tennessine",
+    "Og": "Oganesson"
+]
+
 struct MoleculeView: UIViewRepresentable {
     var molecule: Molecule
-    var onError: (String) -> Void
-    var onAtomTouched: (Atom) -> Void
     
     class Coordinator: NSObject, UIGestureRecognizerDelegate {
         var minX: Float?
@@ -16,39 +135,92 @@ struct MoleculeView: UIViewRepresentable {
         var maxZ: Float?
         var molecule: Molecule
         var scnView: SCNView?
-        var onAtomTouched: (Atom) -> Void
+        var tooltipView: UIView?
         
-        init(molecule: Molecule, onAtomTouched: @escaping (Atom) -> Void) {
+        init(molecule: Molecule) {
             self.molecule = molecule
-            self.onAtomTouched = onAtomTouched
         }
         
-        func getMinMax(molecule: Molecule) {
-            minX = molecule.atoms.min(by: { $0.x < $1.x })?.x
-            maxX = molecule.atoms.max(by: { $0.x < $1.x })?.x
-            minY = molecule.atoms.min(by: { $0.y < $1.y })?.y
-            maxY = molecule.atoms.max(by: { $0.y < $1.y })?.y
-            minZ = molecule.atoms.min(by: { $0.z < $1.z })?.z
-            maxZ = molecule.atoms.max(by: { $0.z < $1.z })?.z
-        }
-        
-        @objc func handleTap(gestureRecognize: UIGestureRecognizer) {
+        @objc func handleTap(gestureRecognize: UITapGestureRecognizer) {
             guard let scnView = scnView else { return }
             
             let location = gestureRecognize.location(in: scnView)
             let hitResults = scnView.hitTest(location, options: [:])
             
+            // Remove existing tooltip
+            tooltipView?.removeFromSuperview()
+            tooltipView = nil
+            
             if let result = hitResults.first,
                let node = result.node as SCNNode?,
                let atomIndex = node.name,
                let atom = molecule.atoms.first(where: { "\($0.index)" == atomIndex }) {
-                onAtomTouched(atom)
+                DispatchQueue.main.async {
+                    if let elementFullName = elementNames[atom.element] {
+                        self.showTooltip(at: location, text: "\(atom.element) - \(elementFullName)")
+                    } else {
+                        self.showTooltip(at: location, text: "\(atom.element)")
+                    }
+                }
             }
+        }
+        
+        func showTooltip(at location: CGPoint, text: String) {
+            guard let scnView = scnView else { return }
+            
+            let tooltip = UILabel()
+            tooltip.text = text
+            tooltip.textColor = .white
+            tooltip.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+            tooltip.textAlignment = .center
+            tooltip.font = UIFont.systemFont(ofSize: 14)
+            tooltip.sizeToFit()
+            tooltip.layer.cornerRadius = 5
+            tooltip.layer.masksToBounds = true
+            
+            var tooltipFrame = tooltip.frame
+            tooltipFrame.size.width += 10
+            tooltipFrame.size.height += 5
+            tooltip.frame = tooltipFrame
+            
+            let tooltipContainer = UIView(frame: tooltipFrame)
+            tooltipContainer.backgroundColor = UIColor.clear
+            tooltipContainer.addSubview(tooltip)
+            tooltip.center = CGPoint(x: tooltipContainer.bounds.midX, y: tooltipContainer.bounds.midY)
+            
+            tooltipContainer.center = CGPoint(x: location.x, y: location.y - tooltipContainer.frame.height / 2 - 10)
+            scnView.addSubview(tooltipContainer)
+            
+            self.tooltipView = tooltipContainer
+        }
+        
+        private func degreesToRadians(_ number: Float) -> Float {
+            return number * .pi / 180
+        }
+        
+        func computeCameraPosition() -> SCNVector3 {
+            guard let minX = molecule.atoms.min(by: { $0.x < $1.x })?.x,
+                  let maxX = molecule.atoms.max(by: { $0.x < $1.x })?.x,
+                  let minY = molecule.atoms.min(by: { $0.y < $1.y })?.y,
+                  let maxY = molecule.atoms.max(by: { $0.y < $1.y })?.y,
+                  let minZ = molecule.atoms.min(by: { $0.z < $1.z })?.z,
+                  let maxZ = molecule.atoms.max(by: { $0.z < $1.z })?.z else {
+                return SCNVector3(x: 0, y: 0, z: 10)
+            }
+            
+            let cameraDistance: Float = 2.0
+            let maxSize = max(maxX - minX, maxY - minY, maxZ - minZ)
+            let cameraView: Float = 2.0 * tan(degreesToRadians(60.0) / 2)
+            
+            var distance: Float = cameraDistance * maxSize / cameraView
+            distance += 0.5 * maxSize
+            
+            return SCNVector3(x: 0, y: 0, z: distance)
         }
     }
     
     func makeCoordinator() -> Coordinator {
-        return Coordinator(molecule: molecule, onAtomTouched: onAtomTouched)
+        return Coordinator(molecule: molecule)
     }
     
     func makeUIView(context: Context) -> SCNView {
@@ -59,10 +231,10 @@ struct MoleculeView: UIViewRepresentable {
         let tapGesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(gestureRecognize:)))
         scnView.addGestureRecognizer(tapGesture)
         
-        context.coordinator.getMinMax(molecule: molecule)
+        context.coordinator.scnView = scnView
+        
         let scene = createScene(coordinator: context.coordinator)
         scnView.scene = scene
-        context.coordinator.scnView = scnView
         
         return scnView
     }
@@ -92,7 +264,7 @@ struct MoleculeView: UIViewRepresentable {
     
     private func getAtomCoordinates(for index: Int) -> SCNVector3 {
         guard let result = molecule.atoms.first(where: { $0.index == index }) else {
-            onError("Invalid atom specified in CONECT line")
+            print("Invalid atom specified in CONECT line")
             return SCNVector3(x: 0, y: 0, z: 0)
         }
         return SCNVector3(x: result.x, y: result.y, z: result.z)
@@ -119,35 +291,16 @@ struct MoleculeView: UIViewRepresentable {
             scene.rootNode.addChildNode(lineNode)
         }
     }
-
+    
     private func addCamera(for scene: SCNScene, coordinator: Coordinator) {
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         
-        guard let minX = coordinator.minX, let maxX = coordinator.maxX, let minZ = coordinator.minZ, let maxZ = coordinator.maxZ, let minY = coordinator.minY, let maxY = coordinator.maxY else {
-            onError("Camera position could not be computed")
-            return
-        }
+        // Compute camera position based on the molecule size
+        let cameraPosition = coordinator.computeCameraPosition()
+        cameraNode.position = cameraPosition
         
-        if let fov = cameraNode.camera?.fieldOfView {
-            let cameraDistance: Float = 2.0
-            let proteinSize: Float? = [maxX - minX, maxY - minY, maxZ - minZ].max()
-            let cameraView: Float = 2.0 * tan(degreesToRadians(Float(fov)) / 2)
-            
-            guard let maxSize = proteinSize else {
-                onError("Protein size could not be computed")
-                return
-            }
-            var distance: Float = cameraDistance * maxSize / cameraView
-            distance += 0.5 * maxSize
-            
-            cameraNode.position = SCNVector3(x: 0, y: 0, z: Float(distance))
-            scene.rootNode.addChildNode(cameraNode)
-        }
-    }
-    
-    private func degreesToRadians(_ number: Float) -> Float {
-        return number * .pi / 180
+        scene.rootNode.addChildNode(cameraNode)
     }
     
     private func getColor(for element: String) -> UIColor {

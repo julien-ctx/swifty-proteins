@@ -24,8 +24,7 @@ struct ProteinView: View {
                     .foregroundColor(.red)
                     .padding()
             } else if let molecule = proteinViewModel.molecule {
-                MoleculeView(molecule: molecule, onError: proteinViewModel.onError,             onAtomTouched: { atom in print("Atom touched: \(atom)") }
-)
+                MoleculeView(molecule: molecule)
             } else {
                 Text("No data to display")
                     .padding()

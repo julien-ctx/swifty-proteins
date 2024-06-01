@@ -99,8 +99,14 @@ class PDBParser {
         }
         
         for (index, connections) in atomConnections {
-            if index - 1 < atoms.count {
+            if index <= atoms.count {
+                let invalidConnection = connections.first(where: { $0 > atoms.count || $0 < 1 })
+                if invalidConnection != nil {
+                    throw PDBParserError.InvalidConectLine
+                }
                 atoms[index - 1].connections = connections
+            } else {
+                throw PDBParserError.InvalidConectLine
             }
         }
         
