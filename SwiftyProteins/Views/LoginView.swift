@@ -11,98 +11,11 @@ struct LoginView: View {
             VStack {
                 Spacer()
 
-                if showPasswordFields {
-                    VStack {
-                        HStack {
-                            Button(action: {
-                                withAnimation {
-                                    showPasswordFields = false
-                                    viewModel.isUsernameValid = false
-                                }
-                            }) {
-                                Image(systemName: "arrow.left")
-                                    .padding()
-                                    .foregroundColor(.blue)
-                            }
-                            Spacer()
-                        }
-                        .padding(.horizontal)
-                        .transition(.opacity)
-
-                        SecureField("Password", text: $viewModel.password)
-                            .padding()
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .transition(.move(edge: .trailing))
-
-                        Button(action: {
-                            viewModel.authenticateUser()
-                            isAuthenticated = viewModel.isAuthenticated
-                        }) {
-                            Text("Login")
-                                .padding()
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(8)
-                        }
-                        .transition(.move(edge: .trailing))
-
-                        if viewModel.useBiometrics {
-                            Button(action: {
-                                Task {
-                                    let success = await viewModel.authenticateWithBiometrics()
-                                    isAuthenticated = success
-                                }
-                            }) {
-                                Text("Use Touch ID / Face ID")
-                                    .padding()
-                                    .background(Color.blue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(8)
-                            }
-                            .transition(.move(edge: .trailing))
-                        }
-                    }
-                    Spacer()
-                } else {
-                    VStack {
-                        TextField("Username", text: $viewModel.username, onCommit: {
-                            viewModel.checkUsername()
-                            withAnimation {
-                                showPasswordFields = viewModel.isUsernameValid
-                            }
-                        })
-                        .padding()
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .autocapitalization(.none)
-                        .disableAutocorrection(true)
-                        .transition(.move(edge: .leading))
-
-                        Button(action: {
-                            viewModel.checkUsername()
-                            withAnimation {
-                                showPasswordFields = viewModel.isUsernameValid
-                            }
-                        }) {
-                            Text("Next")
-                                .padding()
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(8)
-                        }
-                        .transition(.move(edge: .leading))
-                    }
-                    
-                    Spacer()
-
-                    Button(action: {
-                        showCreateAccount.toggle()
-                    }) {
-                        Text("Create Account")
-                            .padding()
-                            .foregroundColor(.blue)
-                    }
-                }
-
+                UsernameField(viewModel: viewModel)
+                PasswordField(viewModel: viewModel, isAuthenticated: $isAuthenticated)
+                Spacer()
+                
+                CreateAccountButton(showCreateAccount: $showCreateAccount)
             }
             .padding()
             .sheet(isPresented: $showCreateAccount) {
@@ -111,6 +24,83 @@ struct LoginView: View {
             .alert(isPresented: $viewModel.showError) {
                 Alert(title: Text(viewModel.errorTitle), message: Text(viewModel.errorMessage), dismissButton: .default(Text("OK")))
             }
+        }
+    }
+}
+
+struct UsernameField: View {
+    @ObservedObject var viewModel: LoginViewModel
+
+    var body: some View {
+        VStack {
+            TextField("Username", text: $viewModel.username)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 1)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+                .transition(.move(edge: .leading))
+        }
+    }
+}
+
+struct PasswordField: View {
+    @ObservedObject var viewModel: LoginViewModel
+    @Binding var isAuthenticated: Bool
+
+    var body: some View {
+        VStack {
+            SecureField("Password", text: $viewModel.password)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 1)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .transition(.move(edge: .trailing))
+
+            Button(action: {
+                let usernameRes = viewModel.checkUsername()
+                if !usernameRes {
+                    return
+                }
+                viewModel.authenticateUser()
+                isAuthenticated = viewModel.isAuthenticated
+            }) {
+                Text("Login")
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+            .transition(.move(edge: .trailing))
+
+            if viewModel.useBiometrics {
+                Button(action: {
+                    Task {
+                        let success = await viewModel.authenticateWithBiometrics()
+                        isAuthenticated = success
+                    }
+                }) {
+                    Text("Use Touch ID / Face ID")
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .transition(.move(edge: .trailing))
+            }
+        }
+    }
+}
+
+struct CreateAccountButton: View {
+    @Binding var showCreateAccount: Bool
+
+    var body: some View {
+        Button(action: {
+            showCreateAccount.toggle()
+        }) {
+            Text("Create Account")
+                .padding()
+                .foregroundColor(.blue)
         }
     }
 }

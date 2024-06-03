@@ -64,18 +64,20 @@ class LoginViewModel: ObservableObject {
         }
     }
 
-    func checkUsername() {
+    func checkUsername() -> Bool {
         if username.isEmpty {
             self.setError("Login Error", "The username is required.")
+            return false
         } else if username.count < 4 || username.count > 20 {
             self.setError("Login Error", "The username must be between 4-20 letters.")
+            return false
         } else {
             self.isUsernameValid = true
+            return true
         }
     }
     
     private func checkBiometricAvailability() {
-        
         if self.context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
             self.useBiometrics = true
         } else {

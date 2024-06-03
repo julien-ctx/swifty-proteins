@@ -16,13 +16,15 @@ struct CreateAccountView: View {
     var body: some View {
         VStack {
             TextField("Username", text: $viewModel.username)
-                .padding()
+                .padding(.horizontal, 16)
+                .padding(.vertical, 1)
                 .autocorrectionDisabled()
                 .autocapitalization(.none)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
             SecureField("Password", text: $viewModel.password)
-                .padding()
+                .padding(.horizontal, 16)
+                .padding(.vertical, 1)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
             Toggle(isOn: $viewModel.useBiometrics) {
@@ -41,7 +43,6 @@ struct CreateAccountView: View {
                     .foregroundColor(.white)
                     .cornerRadius(8)
             }
-
         }
         .padding()
         .alert(isPresented: $viewModel.showAlert) {

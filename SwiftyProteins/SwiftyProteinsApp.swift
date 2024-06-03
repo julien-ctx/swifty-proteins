@@ -10,14 +10,24 @@ import SwiftUI
 @main
 struct SwiftyProteinsApp: App {
     @State private var isAuthenticated: Bool = false
+    @State private var showSplashScreen: Bool = true
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
-            if isAuthenticated {
-                ProteinListView()
+            if showSplashScreen {
+                SplashView()
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                            showSplashScreen = false
+                        }
+                    }
             } else {
-                LoginView(viewModel: LoginViewModel(), isAuthenticated: $isAuthenticated)
+                if isAuthenticated {
+                    ProteinListView()
+                } else {
+                    LoginView(viewModel: LoginViewModel(), isAuthenticated: $isAuthenticated)
+                }
             }
         }
         .onChange(of: scenePhase) { newPhase, _ in

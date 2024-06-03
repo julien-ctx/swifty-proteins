@@ -26,14 +26,12 @@ class CreateAccountViewModel: ObservableObject {
         if !validateUsername() {
             showAlert = true
             alertTitle = "Invalid Username"
-            alertMessage = "Username must be 4-20 characters long and can contain letters, numbers, '-' or '_'. It cannot start with '-' or '_'."
             return false
         }
         
         if !validatePassword() {
             showAlert = true
             alertTitle = "Invalid Password"
-            alertMessage = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number."
             return false
         }
         
@@ -58,12 +56,12 @@ class CreateAccountViewModel: ObservableObject {
     }
 
     private func validatePassword() -> Bool {
-        if password.count < 8 {
-            alertMessage = "Password must be at least 8 characters long."
+        if password.count < 4 {
+            alertMessage = "Password must be at least 4 characters long."
             return false
         }
 
-        let passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$&*]).{8,}$"
+        let passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{4,}$"
         if NSPredicate(format: "SELF MATCHES %@", passwordRegex).evaluate(with: password) {
             return true
         } else {
