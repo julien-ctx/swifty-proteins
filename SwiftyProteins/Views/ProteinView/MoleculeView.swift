@@ -136,12 +136,6 @@ struct MoleculeView: UIViewRepresentable {
     
     // Coordinator is used to have mutable variables because struct is immutable.
     class Coordinator: NSObject, UIGestureRecognizerDelegate {
-        var minX: Float?
-        var maxX: Float?
-        var minY: Float?
-        var maxY: Float?
-        var minZ: Float?
-        var maxZ: Float?
         var molecule: Molecule
         var scnView: SCNView?
         var tooltipView: UIView?
@@ -154,24 +148,19 @@ struct MoleculeView: UIViewRepresentable {
             guard let scnView = scnView else { return }
             
             let location = gestureRecognize.location(in: scnView)
+            let hitResults = scnView.hitTest(location, options: [:])
             
-            DispatchQueue.global(qos: .userInitiated).async {
-                let hitResults = scnView.hitTest(location, options: [:])
-                
-                DispatchQueue.main.async {
-                    self.tooltipView?.removeFromSuperview()
-                    self.tooltipView = nil
-                    
-                    if let result = hitResults.first,
-                       let node = result.node as SCNNode?,
-                       let atomIndex = node.name,
-                       let atom = self.molecule.atoms.first(where: { "\($0.index)" == atomIndex }) {
-                        if let elementFullName = elementNames[atom.element] {
-                            self.showTooltip(at: location, text: "\(atom.element) - \(elementFullName)")
-                        } else {
-                            self.showTooltip(at: location, text: "\(atom.element)")
-                        }
-                    }
+            self.tooltipView?.removeFromSuperview()
+            self.tooltipView = nil
+            
+            if let result = hitResults.first,
+               let node = result.node as SCNNode?,
+               let atomIndex = node.name,
+               let atom = self.molecule.atoms.first(where: { "\($0.index)" == atomIndex }) {
+                if let elementFullName = elementNames[atom.element] {
+                    self.showTooltip(at: location, text: "\(atom.element) - \(elementFullName)")
+                } else {
+                    self.showTooltip(at: location, text: "\(atom.element)")
                 }
             }
         }
@@ -195,7 +184,7 @@ struct MoleculeView: UIViewRepresentable {
             tooltip.frame = tooltipFrame
             
             let tooltipContainer = UIView(frame: tooltipFrame)
-            tooltipContainer.backgroundColor = UIColor.clear
+            tooltipContainer.backgroundColor = .clear
             tooltipContainer.addSubview(tooltip)
             tooltip.center = CGPoint(x: tooltipContainer.bounds.midX, y: tooltipContainer.bounds.midY)
             
@@ -244,15 +233,13 @@ struct MoleculeView: UIViewRepresentable {
         
         context.coordinator.scnView = scnView
         
-        DispatchQueue.global(qos: .userInitiated).async {
-            let scene = self.createScene(coordinator: context.coordinator)
-            
-            DispatchQueue.main.async {
-                scnView.scene = scene
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    self.onImageGenerated(scnView.snapshot())
-                }
-            }
+        let scene = self.createScene(coordinator: context.coordinator)
+        
+        scnView.scene = scene
+        
+        // Capture image after a short delay to ensure the view is fully rendered
+        DispatchQueue.main.async {
+            self.onImageGenerated(scnView.snapshot())
         }
         
         return scnView
@@ -264,15 +251,15 @@ struct MoleculeView: UIViewRepresentable {
         let scene = SCNScene()
         
         for atom in molecule.atoms {
-            addAtom(for: scene, atom)
-            addConnections(for: scene, atom)
+            addAtom(to: scene, atom)
+            addConnections(to: scene, atom)
         }
-        addCamera(for: scene, coordinator: coordinator)
+        addCamera(to: scene, coordinator: coordinator)
         
         return scene
     }
     
-    private func addAtom(for scene: SCNScene, _ atom: Atom) {
+    private func addAtom(to scene: SCNScene, _ atom: Atom) {
         let sphere = SCNSphere(radius: 0.3)
         sphere.firstMaterial?.diffuse.contents = getColor(for: atom.element)
         let node = SCNNode(geometry: sphere)
@@ -290,7 +277,7 @@ struct MoleculeView: UIViewRepresentable {
     }
     
     // https://stackoverflow.com/questions/58470229/how-to-draw-a-line-between-two-points-in-scenekit
-    private func addConnections(for scene: SCNScene, _ atom: Atom) {
+    private func addConnections(to scene: SCNScene, _ atom: Atom) {
         for connection in atom.connections {
             let from = SCNVector3(x: atom.x, y: atom.y, z: atom.z)
             let to = getAtomCoordinates(for: connection)
@@ -314,7 +301,7 @@ struct MoleculeView: UIViewRepresentable {
     
     // https://stackoverflow.com/questions/21544336/how-to-position-the-camera-so-that-my-main-object-is-entirely-visible-and-fit-to
     // https://forum.unity.com/threads/fit-object-exactly-into-perspective-cameras-field-of-view-focus-the-object.496472/
-    private func addCamera(for scene: SCNScene, coordinator: Coordinator) {
+    private func addCamera(to scene: SCNScene, coordinator: Coordinator) {
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         
