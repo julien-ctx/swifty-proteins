@@ -198,9 +198,9 @@ struct MoleculeView: UIViewRepresentable {
             return number * .pi / 180
         }
         
-        func computeCameraPosition() -> SCNVector3 {
+        func computeCameraPosition() -> (position: SCNVector3, maxSize: Float) {
             if molecule.atoms.count == 1 {
-                return SCNVector3(x: 0, y: 0, z: 10)
+                return (SCNVector3(x: 0, y: 0, z: 10), -1.0)
             }
             
             guard let minX = molecule.atoms.min(by: { $0.x < $1.x })?.x,
@@ -209,7 +209,7 @@ struct MoleculeView: UIViewRepresentable {
                   let maxY = molecule.atoms.max(by: { $0.y < $1.y })?.y,
                   let minZ = molecule.atoms.min(by: { $0.z < $1.z })?.z,
                   let maxZ = molecule.atoms.max(by: { $0.z < $1.z })?.z else {
-                return SCNVector3(x: 0, y: 0, z: 10)
+                return (SCNVector3(x: 0, y: 0, z: 10), -1.0)
             }
             
             let cameraDistance: Float = 2.0
@@ -219,7 +219,7 @@ struct MoleculeView: UIViewRepresentable {
             var distance: Float = cameraDistance * maxSize / cameraView
             distance += 0.5 * maxSize
             
-            return SCNVector3(x: 0, y: 0, z: distance)
+            return (SCNVector3(x: 0, y: 0, z: distance), maxSize)
         }
     }
     
@@ -309,8 +309,17 @@ struct MoleculeView: UIViewRepresentable {
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         
-        let cameraPosition = coordinator.computeCameraPosition()
+        let (cameraPosition, maxSize) = coordinator.computeCameraPosition()
         cameraNode.position = cameraPosition
+        
+        guard let camera = cameraNode.camera else {
+            print("No camera available to display protein")
+            return
+        }
+        if maxSize != -1.0 {            
+            camera.zFar = Double(maxSize * 4)
+        }
+        camera.zNear = 0.1
         
         scene.rootNode.addChildNode(cameraNode)
     }
