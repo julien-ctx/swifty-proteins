@@ -7,9 +7,15 @@
 
 import SwiftUI
 
+enum ViewList: Int {
+    case ProteinList = 0
+    case Login = 1
+    case CreateAccount = 2
+}
+
 @main
 struct SwiftyProteinsApp: App {
-    @State private var isAuthenticated: Bool = false
+    @State private var viewList: ViewList = ViewList.Login
     @State private var showSplashScreen: Bool = true
     @Environment(\.scenePhase) private var scenePhase
 
@@ -23,16 +29,18 @@ struct SwiftyProteinsApp: App {
                         }
                     }
             } else {
-                if isAuthenticated {
+                if viewList == ViewList.ProteinList {
                     ProteinListView()
+                } else if viewList == ViewList.Login {
+                    LoginView(viewModel: LoginViewModel(), viewList: $viewList)
                 } else {
-                    LoginView(viewModel: LoginViewModel(), isAuthenticated: $isAuthenticated)
+                    CreateAccountView(viewList: $viewList)
                 }
             }
         }
         .onChange(of: scenePhase) { newPhase, _ in
             if newPhase == .active {
-                isAuthenticated = false
+                viewList = ViewList.Login
             }
         }
     }

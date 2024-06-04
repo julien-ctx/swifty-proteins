@@ -10,22 +10,32 @@ import SwiftUI
 
 struct CreateAccountView: View {
     @Environment(\.presentationMode) var presentationMode
+    @Binding var viewList: ViewList
     @ObservedObject var viewModel = CreateAccountViewModel()
-    @Binding var showCreateAccount: Bool
+    @FocusState private var focusedField: Field?
+
+    enum Field: Hashable {
+        case username
+        case password
+    }
 
     var body: some View {
         VStack {
+            Spacer()
+            
             TextField("Username", text: $viewModel.username)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 1)
                 .autocorrectionDisabled()
                 .autocapitalization(.none)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                .focused($focusedField, equals: .username)
             
             SecureField("Password", text: $viewModel.password)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 1)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                .focused($focusedField, equals: .password)
             
             Toggle(isOn: $viewModel.useBiometrics) {
                 Text("Use Touch ID / Face ID")
@@ -34,7 +44,7 @@ struct CreateAccountView: View {
             
             Button(action: {
                 if viewModel.createUser() {
-                    showCreateAccount = false
+                    viewList = ViewList.Login
                 }
             }) {
                 Text("Create Account")
@@ -43,6 +53,11 @@ struct CreateAccountView: View {
                     .foregroundColor(.white)
                     .cornerRadius(8)
             }
+            
+            Spacer()
+            
+            BackToLogin(viewList: $viewList)
+
         }
         .padding()
         .alert(isPresented: $viewModel.showAlert) {
@@ -55,8 +70,23 @@ struct CreateAccountView: View {
     }
 }
 
+struct BackToLogin: View {
+    @Binding var viewList: ViewList
+    
+    var body: some View {
+        Button(action: {
+            viewList = ViewList.Login
+        }) {
+            Text("Back to login")
+                .padding()
+                .foregroundColor(.blue)
+                .transition(.move(edge: .trailing))
+        }
+    }
+}
+
 struct CreateAccountView_Previews: PreviewProvider {
     static var previews: some View {
-        CreateAccountView(showCreateAccount: .constant(false))
+        CreateAccountView(viewList: .constant(ViewList.CreateAccount))
     }
 }

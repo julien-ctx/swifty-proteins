@@ -11,19 +11,14 @@ import LocalAuthentication
 class LoginViewModel: ObservableObject {
     @Published var username: String = ""
     @Published var password: String = ""
-    @Published var isAuthenticated: Bool = false
+    @Published var viewList: ViewList = ViewList.Login
     @Published var showError: Bool = false
     @Published var errorTitle: String = ""
     @Published var errorMessage: String = ""
-    @Published var useBiometrics: Bool = false
     @Published var isUsernameValid: Bool = false
         
     private let context = LAContext()
     private var error: NSError?
-
-    init() {
-        checkBiometricAvailability()
-    }
     
     func setError(_ title: String, _ message: String) {
         showError = true
@@ -38,13 +33,17 @@ class LoginViewModel: ObservableObject {
         }
         
         if SQLiteManager.shared.verifyUser(username: username, password: password) {
-            isAuthenticated = true
+            self.viewList = ViewList.ProteinList
         } else {
             self.setError("Authentication Failed", "The username or password you entered is incorrect.")
         }
     }
     
     func authenticateWithBiometrics() async -> Bool {
+        if !context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+            self.setError("Biometric Authentication Failed", "Your device doesn't support Face ID.")
+            return false
+        }
         if !SQLiteManager.shared.userExistsWithBiometrics(username: self.username) {
             self.setError("Face ID Error", "This user cannot be authenticated with Face ID.")
             return false
@@ -53,7 +52,7 @@ class LoginViewModel: ObservableObject {
             self.context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Login to your account.") { success, authenticationError in
                 DispatchQueue.main.async {
                     if success {
-                        self.isAuthenticated = true
+                        self.viewList = ViewList.ProteinList
                         continuation.resume(returning: true)
                     } else {
                         self.setError("Authentication Failed", "Biometric authentication failed. Please try again.")
@@ -74,14 +73,6 @@ class LoginViewModel: ObservableObject {
         } else {
             self.isUsernameValid = true
             return true
-        }
-    }
-    
-    private func checkBiometricAvailability() {
-        if self.context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
-            self.useBiometrics = true
-        } else {
-            self.useBiometrics = false
         }
     }
 }

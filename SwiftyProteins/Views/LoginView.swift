@@ -2,34 +2,37 @@ import SwiftUI
 
 struct LoginView: View {
     @ObservedObject var viewModel: LoginViewModel
-    @Binding var isAuthenticated: Bool
-    @State private var showCreateAccount: Bool = false
+    @Binding var viewList: ViewList
     @State private var showPasswordFields: Bool = false
+    @FocusState private var focusedField: Field? // Define a focus state
+
+    enum Field: Hashable {
+        case username
+        case password
+    }
 
     var body: some View {
-        NavigationView {
-            VStack {
-                Spacer()
+        VStack {
+            Spacer()
 
-                UsernameField(viewModel: viewModel)
-                PasswordField(viewModel: viewModel, isAuthenticated: $isAuthenticated)
-                Spacer()
+            UsernameField(viewModel: viewModel, focusedField: $focusedField)
+            PasswordField(viewModel: viewModel, viewList: $viewList, focusedField: $focusedField)
                 
-                CreateAccountButton(showCreateAccount: $showCreateAccount)
-            }
-            .padding()
-            .sheet(isPresented: $showCreateAccount) {
-                CreateAccountView(showCreateAccount: $showCreateAccount)
-            }
-            .alert(isPresented: $viewModel.showError) {
-                Alert(title: Text(viewModel.errorTitle), message: Text(viewModel.errorMessage), dismissButton: .default(Text("OK")))
-            }
+            Spacer()
+            
+            CreateAccountButton(viewList: $viewList)
+            
+        }
+        .padding()
+        .alert(isPresented: $viewModel.showError) {
+            Alert(title: Text(viewModel.errorTitle), message: Text(viewModel.errorMessage), dismissButton: .default(Text("OK")))
         }
     }
 }
 
 struct UsernameField: View {
     @ObservedObject var viewModel: LoginViewModel
+    @FocusState.Binding var focusedField: LoginView.Field?
 
     var body: some View {
         VStack {
@@ -40,13 +43,15 @@ struct UsernameField: View {
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
                 .transition(.move(edge: .leading))
+                .focused($focusedField, equals: .username)
         }
     }
 }
 
 struct PasswordField: View {
     @ObservedObject var viewModel: LoginViewModel
-    @Binding var isAuthenticated: Bool
+    @Binding var viewList: ViewList
+    @FocusState.Binding var focusedField: LoginView.Field?
 
     var body: some View {
         VStack {
@@ -55,6 +60,7 @@ struct PasswordField: View {
                 .padding(.vertical, 1)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .transition(.move(edge: .trailing))
+                .focused($focusedField, equals: .password)
 
             Button(action: {
                 let usernameRes = viewModel.checkUsername()
@@ -62,7 +68,7 @@ struct PasswordField: View {
                     return
                 }
                 viewModel.authenticateUser()
-                isAuthenticated = viewModel.isAuthenticated
+                viewList = viewModel.viewList
             }) {
                 Text("Login")
                     .padding()
@@ -72,41 +78,42 @@ struct PasswordField: View {
             }
             .transition(.move(edge: .trailing))
 
-            if viewModel.useBiometrics {
-                Button(action: {
-                    Task {
-                        let success = await viewModel.authenticateWithBiometrics()
-                        isAuthenticated = success
+            Button(action: {
+                Task {
+                    let success = await viewModel.authenticateWithBiometrics()
+                    if success {
+                        viewList = ViewList.ProteinList
                     }
-                }) {
-                    Text("Use Touch ID / Face ID")
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
                 }
-                .transition(.move(edge: .trailing))
+            }) {
+                Text("Use Touch ID / Face ID")
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
             }
+            .transition(.move(edge: .trailing))
         }
     }
 }
 
 struct CreateAccountButton: View {
-    @Binding var showCreateAccount: Bool
-
+    @Binding var viewList: ViewList
+    
     var body: some View {
         Button(action: {
-            showCreateAccount.toggle()
+            viewList = ViewList.CreateAccount
         }) {
             Text("Create Account")
                 .padding()
                 .foregroundColor(.blue)
+                .transition(.move(edge: .trailing))
         }
     }
 }
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView(viewModel: LoginViewModel(), isAuthenticated: .constant(false))
+        LoginView(viewModel: LoginViewModel(), viewList: .constant(ViewList.Login))
     }
 }

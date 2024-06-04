@@ -75,10 +75,12 @@ class CreateAccountViewModel: ObservableObject {
         var error: NSError?
 
         if !context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
-            showAlert = true
-            alertTitle = "Biometric Authentication Not Available"
-            alertMessage = "Biometric authentication is not available on this device."
-            useBiometrics = false
+            DispatchQueue.main.async { // Ensures UI updates happen on the main thread
+                self.showAlert = true
+                self.alertTitle = "Biometric Authentication Not Available"
+                self.alertMessage = "Biometric authentication is not available on this device."
+                self.useBiometrics = false // Deactivates the toggle if biometrics are not available
+            }
         }
     }
 }
