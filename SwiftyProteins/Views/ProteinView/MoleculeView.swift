@@ -199,6 +199,10 @@ struct MoleculeView: UIViewRepresentable {
         }
         
         func computeCameraPosition() -> SCNVector3 {
+            if molecule.atoms.count == 1 {
+                return SCNVector3(x: 0, y: 0, z: 10)
+            }
+            
             guard let minX = molecule.atoms.min(by: { $0.x < $1.x })?.x,
                   let maxX = molecule.atoms.max(by: { $0.x < $1.x })?.x,
                   let minY = molecule.atoms.min(by: { $0.y < $1.y })?.y,
