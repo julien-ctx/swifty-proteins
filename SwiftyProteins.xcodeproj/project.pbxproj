@@ -7,11 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F413E9A2C0497C8000BAE8F /* db.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F413E992C0497C8000BAE8F /* db.swift */; };
+		6F413E9C2C0497F5000BAE8F /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 6F413E9B2C0497F5000BAE8F /* SQLite */; };
+		6F413E9E2C049A82000BAE8F /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F413E9D2C049A82000BAE8F /* LoginViewModel.swift */; };
+		6F413EA02C049AD7000BAE8F /* CreateAccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F413E9F2C049AD7000BAE8F /* CreateAccountViewModel.swift */; };
+		6F413EA22C049B24000BAE8F /* CreateAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F413EA12C049B24000BAE8F /* CreateAccountView.swift */; };
+		6F52A4FE2C0D3F9F00FF085A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6F52A4FD2C0D3F9F00FF085A /* LaunchScreen.storyboard */; };
+		6F52A5002C0D3FD600FF085A /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F52A4FF2C0D3FD600FF085A /* SplashView.swift */; };
 		6FEE429C2BFC10C700D974B8 /* ligand.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6FEE429B2BFC10C600D974B8 /* ligand.txt */; };
 		6FEE42A02BFC157200D974B8 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE429F2BFC157200D974B8 /* LoginView.swift */; };
 		6FEE42A22BFC157E00D974B8 /* ProteinListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE42A12BFC157E00D974B8 /* ProteinListView.swift */; };
 		6FEE42A42BFC158700D974B8 /* ProteinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE42A32BFC158700D974B8 /* ProteinView.swift */; };
-		6FEE42AC2BFCE9D000D974B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6FEE42AB2BFCE9D000D974B8 /* LaunchScreen.storyboard */; };
 		6FEE42B12BFE3FD800D974B8 /* ProteinListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE42B02BFE3FD800D974B8 /* ProteinListViewModel.swift */; };
 		B7BAA5472BF88B730046F051 /* SwiftyProteinsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7BAA5462BF88B730046F051 /* SwiftyProteinsApp.swift */; };
 		B7BAA54B2BF88B740046F051 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B7BAA54A2BF88B740046F051 /* Assets.xcassets */; };
@@ -39,11 +45,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6F413E992C0497C8000BAE8F /* db.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = db.swift; sourceTree = "<group>"; };
+		6F413E9D2C049A82000BAE8F /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		6F413E9F2C049AD7000BAE8F /* CreateAccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewModel.swift; sourceTree = "<group>"; };
+		6F413EA12C049B24000BAE8F /* CreateAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountView.swift; sourceTree = "<group>"; };
+		6F52A4FD2C0D3F9F00FF085A /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		6F52A4FF2C0D3FD600FF085A /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		6FEE429B2BFC10C600D974B8 /* ligand.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ligand.txt; sourceTree = "<group>"; };
 		6FEE429F2BFC157200D974B8 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		6FEE42A12BFC157E00D974B8 /* ProteinListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinListView.swift; sourceTree = "<group>"; };
 		6FEE42A32BFC158700D974B8 /* ProteinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinView.swift; sourceTree = "<group>"; };
-		6FEE42AB2BFCE9D000D974B8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6FEE42B02BFE3FD800D974B8 /* ProteinListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteinListViewModel.swift; sourceTree = "<group>"; };
 		B7BAA5432BF88B730046F051 /* SwiftyProteins.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftyProteins.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7BAA5462BF88B730046F051 /* SwiftyProteinsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyProteinsApp.swift; sourceTree = "<group>"; };
@@ -61,6 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F413E9C2C0497F5000BAE8F /* SQLite in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,6 +107,8 @@
 				6FEE429F2BFC157200D974B8 /* LoginView.swift */,
 				6FEE42A12BFC157E00D974B8 /* ProteinListView.swift */,
 				6FEE42A32BFC158700D974B8 /* ProteinView.swift */,
+				6F413EA12C049B24000BAE8F /* CreateAccountView.swift */,
+				6F52A4FF2C0D3FD600FF085A /* SplashView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -103,6 +117,8 @@
 			isa = PBXGroup;
 			children = (
 				6FEE42B02BFE3FD800D974B8 /* ProteinListViewModel.swift */,
+				6F413E9D2C049A82000BAE8F /* LoginViewModel.swift */,
+				6F413E9F2C049AD7000BAE8F /* CreateAccountViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -130,13 +146,14 @@
 		B7BAA5452BF88B730046F051 /* SwiftyProteins */ = {
 			isa = PBXGroup;
 			children = (
+				6F413E992C0497C8000BAE8F /* db.swift */,
 				6FEE42AF2BFE3FBD00D974B8 /* ViewModels */,
 				6FEE429E2BFC155400D974B8 /* Views */,
 				6FEE429D2BFC113200D974B8 /* Resources */,
 				B7BAA5462BF88B730046F051 /* SwiftyProteinsApp.swift */,
 				B7BAA54A2BF88B740046F051 /* Assets.xcassets */,
 				B7BAA54C2BF88B740046F051 /* Preview Content */,
-				6FEE42AB2BFCE9D000D974B8 /* LaunchScreen.storyboard */,
+				6F52A4FD2C0D3F9F00FF085A /* LaunchScreen.storyboard */,
 			);
 			path = SwiftyProteins;
 			sourceTree = "<group>";
@@ -182,6 +199,9 @@
 			dependencies = (
 			);
 			name = SwiftyProteins;
+			packageProductDependencies = (
+				6F413E9B2C0497F5000BAE8F /* SQLite */,
+			);
 			productName = SwiftyProteins;
 			productReference = B7BAA5432BF88B730046F051 /* SwiftyProteins.app */;
 			productType = "com.apple.product-type.application";
@@ -254,6 +274,9 @@
 				Base,
 			);
 			mainGroup = B7BAA53A2BF88B730046F051;
+			packageReferences = (
+				6F413E982C049579000BAE8F /* XCRemoteSwiftPackageReference "SQLite" */,
+			);
 			productRefGroup = B7BAA5442BF88B730046F051 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -271,9 +294,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7BAA54E2BF88B740046F051 /* Preview Assets.xcassets in Resources */,
+				6F52A4FE2C0D3F9F00FF085A /* LaunchScreen.storyboard in Resources */,
 				6FEE429C2BFC10C700D974B8 /* ligand.txt in Resources */,
 				B7BAA54B2BF88B740046F051 /* Assets.xcassets in Resources */,
-				6FEE42AC2BFCE9D000D974B8 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,10 +322,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				6FEE42B12BFE3FD800D974B8 /* ProteinListViewModel.swift in Sources */,
+				6F413E9A2C0497C8000BAE8F /* db.swift in Sources */,
 				6FEE42A02BFC157200D974B8 /* LoginView.swift in Sources */,
+				6F413EA22C049B24000BAE8F /* CreateAccountView.swift in Sources */,
 				6FEE42A42BFC158700D974B8 /* ProteinView.swift in Sources */,
+				6F413EA02C049AD7000BAE8F /* CreateAccountViewModel.swift in Sources */,
 				6FEE42A22BFC157E00D974B8 /* ProteinListView.swift in Sources */,
+				6F52A5002C0D3FD600FF085A /* SplashView.swift in Sources */,
 				B7BAA5472BF88B730046F051 /* SwiftyProteinsApp.swift in Sources */,
+				6F413E9E2C049A82000BAE8F /* LoginViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,14 +491,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftyProteins/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SwiftyProteins/Info.plist;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Let's identify";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -491,14 +522,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftyProteins/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SwiftyProteins/Info.plist;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Let's identify";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -626,6 +660,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6F413E982C049579000BAE8F /* XCRemoteSwiftPackageReference "SQLite" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stephencelis/SQLite.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.15.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6F413E9B2C0497F5000BAE8F /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6F413E982C049579000BAE8F /* XCRemoteSwiftPackageReference "SQLite" */;
+			productName = SQLite;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B7BAA53B2BF88B730046F051 /* Project object */;
 }
