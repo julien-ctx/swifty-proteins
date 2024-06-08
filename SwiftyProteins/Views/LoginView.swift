@@ -115,6 +115,10 @@ struct FaceIDButton: View {
     var body: some View {
         Button(action: {
             Task {
+                let usernameRes = viewModel.checkUsername()
+                if !usernameRes {
+                    return
+                }
                 let success = await viewModel.authenticateWithBiometrics()
                 if success {
                     viewList = ViewList.ProteinList
