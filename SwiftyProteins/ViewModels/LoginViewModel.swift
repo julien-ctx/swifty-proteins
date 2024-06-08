@@ -28,7 +28,7 @@ class LoginViewModel: ObservableObject {
         }
     }
     
-    func authenticateUser() {
+    func authenticateUser() async -> Void {
         if password.isEmpty {
             self.setError("Login Error", "The password is required.")
             return

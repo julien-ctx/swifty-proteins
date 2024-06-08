@@ -89,12 +89,14 @@ struct LoginButton: View {
 
     var body: some View {
         Button(action: {
-            let usernameRes = viewModel.checkUsername()
-            if !usernameRes {
-                return
+            Task {
+                let usernameRes = viewModel.checkUsername()
+                if !usernameRes {
+                    return
+                }
+                await viewModel.authenticateUser()
+                viewList = viewModel.viewList
             }
-            viewModel.authenticateUser()
-            viewList = viewModel.viewList
         }) {
             Text("Login")
                 .padding()
