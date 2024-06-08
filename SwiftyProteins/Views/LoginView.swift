@@ -12,20 +12,37 @@ struct LoginView: View {
     }
 
     var body: some View {
-        VStack {
-            Spacer()
+        GeometryReader { geometry in
+            VStack {
+                Spacer()
 
-            UsernameField(viewModel: viewModel, focusedField: $focusedField)
-            PasswordField(viewModel: viewModel, viewList: $viewList, focusedField: $focusedField)
+                VStack {
+                    UsernameField(viewModel: viewModel, focusedField: $focusedField)
+                    PasswordField(viewModel: viewModel, viewList: $viewList, focusedField: $focusedField)
+                }
                 
-            Spacer()
-            
-            CreateAccountButton(viewList: $viewList)
-            
-        }
-        .padding()
-        .alert(isPresented: $viewModel.showError) {
-            Alert(title: Text(viewModel.errorTitle), message: Text(viewModel.errorMessage), dismissButton: .default(Text("OK")))
+                if geometry.size.width > geometry.size.height {
+                    HStack {
+                        LoginButton(viewModel: viewModel, viewList: $viewList)
+                        FaceIDButton(viewModel: viewModel, viewList: $viewList)
+                        CreateAccount(viewList: $viewList)
+                    }
+                    .padding()
+                } else {
+                    VStack {
+                        LoginButton(viewModel: viewModel, viewList: $viewList)
+                        FaceIDButton(viewModel: viewModel, viewList: $viewList)
+                        CreateAccount(viewList: $viewList)
+                    }
+                    .padding()
+                }
+                Spacer()
+                
+            }
+            .padding()
+            .alert(isPresented: $viewModel.showError) {
+                Alert(title: Text(viewModel.errorTitle), message: Text(viewModel.errorMessage), dismissButton: .default(Text("OK")))
+            }
         }
     }
 }
@@ -61,43 +78,57 @@ struct PasswordField: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .transition(.move(edge: .trailing))
                 .focused($focusedField, equals: .password)
-
-            Button(action: {
-                let usernameRes = viewModel.checkUsername()
-                if !usernameRes {
-                    return
-                }
-                viewModel.authenticateUser()
-                viewList = viewModel.viewList
-            }) {
-                Text("Login")
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-            .transition(.move(edge: .trailing))
-
-            Button(action: {
-                Task {
-                    let success = await viewModel.authenticateWithBiometrics()
-                    if success {
-                        viewList = ViewList.ProteinList
-                    }
-                }
-            }) {
-                Text("Use Touch ID / Face ID")
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-            .transition(.move(edge: .trailing))
         }
     }
 }
 
-struct CreateAccountButton: View {
+struct LoginButton: View {
+    @ObservedObject var viewModel: LoginViewModel
+    @Binding var viewList: ViewList
+
+    var body: some View {
+        Button(action: {
+            let usernameRes = viewModel.checkUsername()
+            if !usernameRes {
+                return
+            }
+            viewModel.authenticateUser()
+            viewList = viewModel.viewList
+        }) {
+            Text("Login")
+                .padding()
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(8)
+        }
+        .transition(.move(edge: .trailing))
+    }
+}
+
+struct FaceIDButton: View {
+    @ObservedObject var viewModel: LoginViewModel
+    @Binding var viewList: ViewList
+
+    var body: some View {
+        Button(action: {
+            Task {
+                let success = await viewModel.authenticateWithBiometrics()
+                if success {
+                    viewList = ViewList.ProteinList
+                }
+            }
+        }) {
+            Text("Use Touch ID / Face ID")
+                .padding()
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(8)
+        }
+        .transition(.move(edge: .trailing))
+    }
+}
+
+struct CreateAccount: View {
     @Binding var viewList: ViewList
     
     var body: some View {

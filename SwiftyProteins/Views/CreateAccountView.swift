@@ -20,52 +20,80 @@ struct CreateAccountView: View {
     }
 
     var body: some View {
-        VStack {
-            Spacer()
-            
-            TextField("Username", text: $viewModel.username)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 1)
-                .autocorrectionDisabled()
-                .autocapitalization(.none)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .focused($focusedField, equals: .username)
-            
-            SecureField("Password", text: $viewModel.password)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 1)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .focused($focusedField, equals: .password)
-            
-            Toggle(isOn: $viewModel.useBiometrics) {
-                Text("Use Touch ID / Face ID")
+        GeometryReader { geometry in
+            VStack {
+                Spacer()
+                
+                TextField("Username", text: $viewModel.username)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 1)
+                    .autocorrectionDisabled()
+                    .autocapitalization(.none)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .focused($focusedField, equals: .username)
+                
+                SecureField("Password", text: $viewModel.password)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 1)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .focused($focusedField, equals: .password)
+                
+                
+                if geometry.size.width > geometry.size.height {
+                    HStack {
+                        FaceIDToggle(isOn: $viewModel.useBiometrics)
+                        CreateAccountButton(viewModel: viewModel, viewList: $viewList)
+                        BackToLogin(viewList: $viewList)
+                    }
+                    .padding()
+                } else {
+                    VStack {
+                        FaceIDToggle(isOn: $viewModel.useBiometrics)
+                        CreateAccountButton(viewModel: viewModel, viewList: $viewList)
+                        BackToLogin(viewList: $viewList)
+                    }
+                    .padding()
+                }
+                Spacer()
             }
             .padding()
-            
-            Button(action: {
-                if viewModel.createUser() {
-                    viewList = ViewList.Login
-                }
-            }) {
-                Text("Create Account")
-                    .padding()
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+            .alert(isPresented: $viewModel.showAlert) {
+                Alert(
+                    title: Text(viewModel.alertTitle),
+                    message: Text(viewModel.alertMessage),
+                    dismissButton: .default(Text("OK"))
+                )
             }
-            
-            Spacer()
-            
-            BackToLogin(viewList: $viewList)
+        }
+    }
+}
 
+struct FaceIDToggle: View {
+    @Binding var isOn: Bool
+
+    var body: some View {
+        Toggle(isOn: $isOn) {
+            Text("Use Touch ID / Face ID")
         }
         .padding()
-        .alert(isPresented: $viewModel.showAlert) {
-            Alert(
-                title: Text(viewModel.alertTitle),
-                message: Text(viewModel.alertMessage),
-                dismissButton: .default(Text("OK"))
-            )
+    }
+}
+
+struct CreateAccountButton: View {
+    @ObservedObject var viewModel: CreateAccountViewModel
+    @Binding var viewList: ViewList
+    
+    var body: some View {
+        Button(action: {
+            if viewModel.createUser() {
+                viewList = .Login
+            }
+        }) {
+            Text("Create Account")
+                .padding()
+                .background(Color.green)
+                .foregroundColor(.white)
+                .cornerRadius(8)
         }
     }
 }
