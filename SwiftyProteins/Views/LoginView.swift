@@ -43,6 +43,7 @@ struct LoginView: View {
             .alert(isPresented: $viewModel.showError) {
                 Alert(title: Text(viewModel.errorTitle), message: Text(viewModel.errorMessage), dismissButton: .default(Text("OK")))
             }
+            .ignoresSafeArea(.keyboard, edges: .bottom)
         }
     }
 }
