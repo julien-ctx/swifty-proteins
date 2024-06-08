@@ -21,9 +21,11 @@ class LoginViewModel: ObservableObject {
     private var error: NSError?
     
     func setError(_ title: String, _ message: String) {
-        showError = true
-        errorTitle = title
-        errorMessage = message
+        DispatchQueue.main.async {
+            self.showError = true
+            self.errorTitle = title
+            self.errorMessage = message
+        }
     }
     
     func authenticateUser() {
@@ -33,7 +35,9 @@ class LoginViewModel: ObservableObject {
         }
         
         if SQLiteManager.shared.verifyUser(username: username, password: password) {
-            self.viewList = ViewList.ProteinList
+            DispatchQueue.main.async {
+                self.viewList = ViewList.ProteinList
+            }
         } else {
             self.setError("Authentication Failed", "The username or password you entered is incorrect.")
         }
@@ -71,7 +75,9 @@ class LoginViewModel: ObservableObject {
             self.setError("Login Error", "The username must be between 4-20 letters.")
             return false
         } else {
-            self.isUsernameValid = true
+            DispatchQueue.main.async {
+                self.isUsernameValid = true
+            }
             return true
         }
     }
